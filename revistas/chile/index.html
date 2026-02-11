@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edición Chile | Global Tour KM0</title>
+    <title>Edición Chile | Global Tour KM0 Magazine</title>
+    
     <link rel="stylesheet" href="../../assets/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
+    
     <style>
         body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
-        .magazine-viewport { margin-top: 20px; width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
-        #flipbook { visibility: hidden; }
+        .magazine-viewport { margin-top: 40px; width: 100%; display: flex; justify-content: center; align-items: center; }
         .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        #flipbook { visibility: hidden; }
     </style>
 </head>
 <body>
     <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
-    <div style="padding: 10px; z-index: 100;">
+    <div style="padding: 20px; z-index: 100;">
         <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
     </div>
 
@@ -31,18 +33,16 @@
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // 1. Inyectar páginas dinámicamente
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
+                // IMPORTANTE: quitamos la barra inicial para que la ruta sea relativa
                 flipbook.append('<div class="page" style="background-image:url(paginas/'+num+'.png);"></div>');
             }
 
-            // 2. Proporciones A4
             let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.8 : 380; 
+            let anchoPagina = esMovil ? $(window).width() * 0.8 : 400; 
             let altoPagina = anchoPagina * 1.414;
 
-            // 3. Inicializar Turn.js con retraso
             setTimeout(function() {
                 flipbook.css("visibility", "visible").turn({
                     width: esMovil ? anchoPagina : anchoPagina * 2,
