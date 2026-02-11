@@ -9,35 +9,39 @@
     <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; color: white; }
         
-        /* Contenedor principal con altura garantizada */
         .magazine-viewport { 
-            position: relative;
-            margin-top: 30px; 
-            width: 90vw; 
-            height: 80vh; 
+            margin-top: 20px;
+            width: 95vw; 
+            height: 85vh; 
             display: flex; 
             justify-content: center; 
             align-items: center;
         }
 
         #flipbook {
-            display: none; /* Se activa por JS */
+            margin: auto;
+            display: block !important;
         }
 
         .page { 
             background-color: white; 
-            background-size: 100% 100%; 
-            background-repeat: no-repeat;
-            background-position: center;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5); 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .page img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            pointer-events: none; /* Evita que el click en la imagen bloquee el giro */
         }
 
         .btn-download { 
             background: #e60000; color: white; padding: 10px 20px; 
             text-decoration: none; border-radius: 5px; font-weight: bold; 
-            font-family: sans-serif; margin: 20px; display: inline-block;
+            font-family: sans-serif; margin: 15px; display: inline-block;
         }
     </style>
 </head>
@@ -55,46 +59,46 @@
     <script type="text/javascript">
         $(window).on('load', function() {
             const totalPaginas = 30; 
-            const flipbook = $("#flipbook");
+            const fb = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // 1. Inyectamos las páginas
+            // 1. Inyectamos las páginas como etiquetas IMG reales
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 let imgPath = "paginas/" + num + ".png";
                 
-                let pagina = $('<div />', {
-                    'class': 'page',
-                    'style': 'background-image:url(' + imgPath + ');'
-                });
-                flipbook.append(pagina);
+                // Creamos un div con una imagen dentro
+                let pagina = $('<div />', { 'class': 'page' });
+                let img = $('<img />', { 'src': imgPath });
+                
+                pagina.append(img);
+                fb.append(pagina);
             }
 
-            // 2. Calculamos dimensiones A4
+            // 2. Medidas dinámicas
             let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
+            let anchoPagina = esMovil ? $(window).width() * 0.9 : 400;
             let altoPagina = anchoPagina * 1.414;
 
-            // 3. Inicialización forzada
+            // 3. Inicialización con margen para que las imágenes "existan" en el DOM
             setTimeout(function() {
-                flipbook.show().turn({
+                fb.turn({
                     width: esMovil ? anchoPagina : anchoPagina * 2,
                     height: altoPagina,
                     display: esMovil ? 'single' : 'double',
                     autoCenter: true,
                     acceleration: true,
-                    gradients: true,
                     elevation: 50,
                     when: {
                         turning: function() {
                             if (audio) {
                                 audio.currentTime = 0;
-                                audio.play().catch(function(e){});
+                                audio.play().catch(function(){});
                             }
                         }
                     }
                 });
-            }, 300);
+            }, 500);
         });
     </script>
 </body>
