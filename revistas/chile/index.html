@@ -3,46 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revista - Edición País</title>
+    <title>Revista Chile - KM0</title>
+    <link rel="stylesheet" href="../../assets/style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.rawgit.com/blasten/turn.js/master/turn.min.js"></script>
-    <style>
-        body { background: #222; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #flipbook { width: 1000px; height: 600px; }
-        .page { width: 500px; height: 600px; background-color: white; background-size: 100% 100%; }
-    </style>
 </head>
 <body>
 
-<div id="flipbook">
+    <div class="download-container">
+        <a href="revista_chile.pdf" class="btn-download" download>Descargar PDF Edición Chile</a>
     </div>
 
-<script>
-    // --- CONFIGURACIÓN ---
-    const totalPaginas = 30; // <--- ¡CAMBIA ESTO por el número de imágenes que tengas!
-    const carpetaPaginas = "paginas/"; // Ruta a tus fotos
-    // ---------------------
+    <div class="magazine-viewport">
+        <div id="flipbook">
+            </div>
+    </div>
 
-    const flipbook = $("#flipbook");
+    <script>
+        const totalPaginas = 30; // Ajusta según la revista
+        const flipbook = $("#flipbook");
 
-    // Generar las páginas dinámicamente
-    for (let i = 1; i <= totalPaginas; i++) {
-        const page = $('<div />', {
-            'class': 'page',
-            'style': `background-image: url(${carpetaPaginas}${i}.png)`
+        function cargarPaginas() {
+            for (let i = 1; i <= totalPaginas; i++) {
+                // Formatear a 001, 002, etc.
+                let num = i.toString().padStart(3, '0');
+                let pagina = $('<div />', {
+                    'class': 'page',
+                    'style': `background-image:url(paginas/${num}.png); background-size: 100% 100%;`
+                });
+                flipbook.append(pagina);
+            }
+        }
+
+        function inicializarFlipbook() {
+            let width = 1000;
+            let height = 650;
+            let display = 'double';
+
+            // Si es móvil, forzar una sola página
+            if ($(window).width() < 768) {
+                width = $(window).width() * 0.9;
+                height = width * 1.4; // Proporción vertical
+                display = 'single';
+            }
+
+            flipbook.turn({
+                width: width,
+                height: height,
+                display: display,
+                autoCenter: true,
+                acceleration: true,
+                gradients: true,
+                elevation: 50
+            });
+        }
+
+        $(window).ready(function() {
+            cargarPaginas();
+            inicializarFlipbook();
         });
-        flipbook.append(page);
-    }
-
-    // Inicializar Turn.js
-    flipbook.turn({
-        width: 1000,
-        height: 600,
-        autoCenter: true,
-        gradients: true,
-        acceleration: true
-    });
-</script>
-
+    </script>
 </body>
 </html>

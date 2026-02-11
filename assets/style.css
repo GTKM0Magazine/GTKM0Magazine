@@ -1,158 +1,69 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap');
+/* Registro de Tipografías */
+@font-face {
+    font-family: 'Miracle';
+    src: url('miracle.woff') format('woff');
+}
+
+@font-face {
+    font-family: 'BigShoulders';
+    src: url('big-shoulders-bold.woff') format('woff');
+    font-weight: bold;
+}
 
 :root {
-    --primary-color: #A32929; /* Un rojo cálido, quizás como un atardecer o pasión */
-    --secondary-color: #F8F8F8; /* Blanco roto para fondos */
-    --text-color: #333333; /* Gris oscuro para el texto principal */
-    --light-text-color: #666666; /* Gris más claro para subtítulos */
-    --accent-color: #FFD700; /* Un toque dorado, como la luz del amanecer */
+    --rojo-alboran: #e60000;
+    --negro: #1a1a1a;
+    --blanco: #ffffff;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
-    background: var(--secondary-color);
-    color: var(--text-color);
+    background-color: var(--negro);
     margin: 0;
-    padding: 0;
-    line-height: 1.6;
+    font-family: Arial, sans-serif;
     overflow-x: hidden;
 }
 
-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #E74C3C 100%); /* Degradado cálido */
-    color: white;
-    padding: 3rem 1rem;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.5rem;
-    margin-bottom: 0.5rem;
-    letter-spacing: 2px;
-}
-
-header p {
-    font-size: 1.2rem;
-    max-width: 800px;
-    margin: 0 auto;
-    opacity: 0.9;
-}
-
-.container {
-    max-width: 1200px;
-    margin: 3rem auto;
-    padding: 0 1rem;
-}
-
-.grid-ediciones {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    justify-content: center;
-}
-
-.card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-}
-
-.card-image {
+/* Contenedor del Flipbook */
+.magazine-viewport {
     width: 100%;
-    height: 200px; /* Altura fija para las imágenes */
-    object-fit: cover; /* Recorta la imagen para que encaje */
-    border-bottom: 2px solid var(--primary-color);
-}
-
-.card-content {
-    padding: 1.5rem;
-    flex-grow: 1;
+    height: 80vh;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
 
-.card-content h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.8rem;
-    color: var(--primary-color);
-    margin-top: 0;
-    margin-bottom: 1rem;
+#flipbook {
+    margin: auto;
 }
 
-.card-actions {
-    margin-top: 1.5rem;
-    display: flex;
-    flex-direction: column; /* Botones apilados */
-    gap: 0.8rem;
-}
-
-.btn {
-    display: block; /* Ocupa todo el ancho */
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px; /* Bordes redondeados */
-    text-decoration: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    border: none;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #C0392B; /* Un rojo un poco más oscuro */
-    transform: translateY(-2px);
-}
-
-.btn-secondary {
-    background-color: var(--light-text-color);
-    color: white;
-}
-
-.btn-secondary:hover {
-    background-color: var(--text-color);
-    transform: translateY(-2px);
-}
-
-footer {
+/* Botón de Descarga */
+.download-container {
     text-align: center;
-    padding: 2rem 1rem;
-    background: var(--text-color);
-    color: var(--secondary-color);
-    margin-top: 4rem;
-    font-size: 0.9rem;
+    padding: 20px;
 }
 
-/* Responsive adjustments */
+.btn-download {
+    font-family: 'BigShoulders', sans-serif;
+    background-color: var(--rojo-alboran);
+    color: white;
+    padding: 12px 30px;
+    text-decoration: none;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    border-radius: 5px;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.btn-download:hover {
+    background-color: white;
+    color: var(--rojo-alboran);
+}
+
+/* Responsive: Ajustar altura en móviles */
 @media (max-width: 768px) {
-    header h1 {
-        font-size: 2.5rem;
-    }
-    header p {
-        font-size: 1rem;
-    }
-    .grid-ediciones {
-        grid-template-columns: 1fr; /* Una columna en móviles */
-    }
-    .card {
-        margin: 0 auto;
-        max-width: 350px; /* Limita el ancho de la tarjeta en móviles */
+    .magazine-viewport {
+        height: 60vh;
     }
 }
