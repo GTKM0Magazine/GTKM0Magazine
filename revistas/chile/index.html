@@ -5,19 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edición Chile | Global Tour KM0 Magazine</title>
     
-    <link rel="stylesheet" href="../../assets/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
+
+    <link rel="stylesheet" href="../../assets/style.css">
     
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
-        .magazine-viewport { margin-top: 40px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        .magazine-viewport { margin-top: 30px; width: 100%; display: flex; justify-content: center; align-items: center; }
         #flipbook { visibility: hidden; }
+        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .btn-download { font-family: sans-serif; background: #e60000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
+
     <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
+
     <div style="padding: 20px; z-index: 100;">
         <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
     </div>
@@ -29,35 +34,49 @@
 
     <script>
         $(window).on('load', function() {
-            const totalPaginas = 30; 
+            const totalPaginas = 30; // Asegúrate de que tienes hasta la 030.png
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
+            // Crear las páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
-                // IMPORTANTE: quitamos la barra inicial para que la ruta sea relativa
-                flipbook.append('<div class="page" style="background-image:url(paginas/'+num+'.png);"></div>');
+                // Ruta relativa directa sin barras iniciales complicadas
+                let pagina = $('<div />', {
+                    'class': 'page',
+                    'style': 'background-image:url(paginas/' + num + '.png);'
+                });
+                flipbook.append(pagina);
             }
 
+            // Cálculo de tamaño
             let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.8 : 400; 
+            let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
             let altoPagina = anchoPagina * 1.414;
 
+            // Inicializar con un pequeño margen de tiempo
             setTimeout(function() {
-                flipbook.css("visibility", "visible").turn({
-                    width: esMovil ? anchoPagina : anchoPagina * 2,
-                    height: altoPagina,
-                    display: esMovil ? 'single' : 'double',
-                    autoCenter: true,
-                    acceleration: true,
-                    gradients: true,
-                    elevation: 50,
-                    when: {
-                        turning: function() {
-                            if (audio) { audio.currentTime = 0; audio.play().catch(function(){}); }
+                if (typeof flipbook.turn === "function") {
+                    flipbook.css("visibility", "visible").turn({
+                        width: esMovil ? anchoPagina : anchoPagina * 2,
+                        height: altoPagina,
+                        display: esMovil ? 'single' : 'double',
+                        autoCenter: true,
+                        acceleration: true,
+                        gradients: true,
+                        elevation: 50,
+                        when: {
+                            turning: function() {
+                                if (audio) {
+                                    audio.currentTime = 0;
+                                    audio.play().catch(function(e){});
+                                }
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    console.error("Error: La librería Turn.js no se ha cargado.");
+                }
             }, 500);
         });
     </script>
