@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revista - Edición País</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.rawgit.com/blasten/turn.js/master/turn.min.js"></script>
+    <style>
+        body { background: #222; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        #flipbook { width: 1000px; height: 600px; }
+        .page { width: 500px; height: 600px; background-color: white; background-size: 100% 100%; }
+    </style>
+</head>
+<body>
+
+<div id="flipbook">
+    </div>
+
+<script>
+    // --- CONFIGURACIÓN ---
+    const totalPaginas = 30; // <--- ¡CAMBIA ESTO por el número de imágenes que tengas!
+    const carpetaPaginas = "paginas/"; // Ruta a tus fotos
+    // ---------------------
+
+    const flipbook = $("#flipbook");
+
+    // Generar las páginas dinámicamente
+    for (let i = 1; i <= totalPaginas; i++) {
+        const page = $('<div />', {
+            'class': 'page',
+            'style': `background-image: url(${carpetaPaginas}${i}.png)`
+        });
+        flipbook.append(page);
+    }
+
+    // Inicializar Turn.js
+    flipbook.turn({
+        width: 1000,
+        height: 600,
+        autoCenter: true,
+        gradients: true,
+        acceleration: true
+    });
+</script>
+
+</body>
+</html>
