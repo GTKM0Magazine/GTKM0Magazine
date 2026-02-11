@@ -9,11 +9,36 @@
     <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        .magazine-viewport { margin-top: 50px; width: 100%; display: flex; justify-content: center; align-items: center; }
-        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #flipbook { visibility: hidden; }
-        .btn-download { background: #e60000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; font-family: sans-serif; display: inline-block; margin: 20px; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        /* Contenedor principal con altura garantizada */
+        .magazine-viewport { 
+            position: relative;
+            margin-top: 30px; 
+            width: 90vw; 
+            height: 80vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        #flipbook {
+            display: none; /* Se activa por JS */
+        }
+
+        .page { 
+            background-color: white; 
+            background-size: 100% 100%; 
+            background-repeat: no-repeat;
+            background-position: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5); 
+        }
+
+        .btn-download { 
+            background: #e60000; color: white; padding: 10px 20px; 
+            text-decoration: none; border-radius: 5px; font-weight: bold; 
+            font-family: sans-serif; margin: 20px; display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -33,38 +58,43 @@
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // Inyectar páginas
+            // 1. Inyectamos las páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
-                flipbook.append('<div class="page" style="background-image:url(paginas/' + num + '.png);"></div>');
+                let imgPath = "paginas/" + num + ".png";
+                
+                let pagina = $('<div />', {
+                    'class': 'page',
+                    'style': 'background-image:url(' + imgPath + ');'
+                });
+                flipbook.append(pagina);
             }
 
-            // Medidas A4 corregidas
+            // 2. Calculamos dimensiones A4
             let esMovil = $(window).width() < 768;
             let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
             let altoPagina = anchoPagina * 1.414;
 
-            // Inicialización definitiva
+            // 3. Inicialización forzada
             setTimeout(function() {
-                if (typeof flipbook.turn === 'function') {
-                    flipbook.css("visibility", "visible").turn({
-                        width: esMovil ? anchoPagina : anchoPagina * 2,
-                        height: altoPagina,
-                        display: esMovil ? 'single' : 'double',
-                        autoCenter: true,
-                        acceleration: true,
-                        gradients: true,
-                        elevation: 50,
-                        when: {
-                            turning: function() {
-                                if (audio) { audio.currentTime = 0; audio.play().catch(function(e){}); }
+                flipbook.show().turn({
+                    width: esMovil ? anchoPagina : anchoPagina * 2,
+                    height: altoPagina,
+                    display: esMovil ? 'single' : 'double',
+                    autoCenter: true,
+                    acceleration: true,
+                    gradients: true,
+                    elevation: 50,
+                    when: {
+                        turning: function() {
+                            if (audio) {
+                                audio.currentTime = 0;
+                                audio.play().catch(function(e){});
                             }
                         }
-                    });
-                } else {
-                    console.error("La librería Turn.js no se cargó correctamente.");
-                }
-            }, 500);
+                    }
+                });
+            }, 300);
         });
     </script>
 </body>
