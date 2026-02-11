@@ -15,53 +15,35 @@
     </div>
 
     <div class="magazine-viewport">
-        <div id="flipbook">
-            </div>
-    </div>
+    <div id="flipbook">
+        </div>
+</div>
 
-    <script>
-        const totalPaginas = 30; // Ajusta según la revista
-        const flipbook = $("#flipbook");
+<script>
+    const totalPaginas = 30; // Asegúrate de que este número sea el correcto
+    const flipbook = $("#flipbook");
 
-        function cargarPaginas() {
-            for (let i = 1; i <= totalPaginas; i++) {
-                // Formatear a 001, 002, etc.
-                let num = i.toString().padStart(3, '0');
-                let pagina = $('<div />', {
-                    'class': 'page',
-                    'style': `background-image:url(paginas/${num}.png); background-size: 100% 100%;`
-                });
-                flipbook.append(pagina);
-            }
-        }
-
-        function inicializarFlipbook() {
-            let width = 1000;
-            let height = 650;
-            let display = 'double';
-
-            // Si es móvil, forzar una sola página
-            if ($(window).width() < 768) {
-                width = $(window).width() * 0.9;
-                height = width * 1.4; // Proporción vertical
-                display = 'single';
-            }
-
-            flipbook.turn({
-                width: width,
-                height: height,
-                display: display,
-                autoCenter: true,
-                acceleration: true,
-                gradients: true,
-                elevation: 50
-            });
-        }
-
-        $(window).ready(function() {
-            cargarPaginas();
-            inicializarFlipbook();
+    // 1. Cargar las páginas antes de inicializar el efecto
+    for (let i = 1; i <= totalPaginas; i++) {
+        let num = i.toString().padStart(3, '0');
+        let pagina = $('<div />', {
+            'class': 'page',
+            'style': `background-image:url(paginas/${num}.png);`
         });
-    </script>
+        flipbook.append(pagina);
+    }
+
+    // 2. Inicializar el motor de turn.js
+    $(window).ready(function() {
+        flipbook.turn({
+            width: $(window).width() > 768 ? 1000 : $(window).width() * 0.9,
+            height: $(window).width() > 768 ? 650 : 500,
+            autoCenter: true,
+            display: $(window).width() > 768 ? 'double' : 'single',
+            acceleration: true,
+            gradients: true
+        });
+    });
+</script>
 </body>
 </html>
