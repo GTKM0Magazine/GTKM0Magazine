@@ -9,37 +9,43 @@
     <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
         
+        /* BLOQUEO CRÍTICO: El contenedor NO permite que las fotos se vean hasta que el libro esté listo */
         .magazine-viewport { 
             margin-top: 20px;
-            width: 100%; 
-            height: 85vh; 
+            width: 100vw; 
+            height: 90vh; 
             display: flex; 
             justify-content: center; 
             align-items: center;
+            overflow: hidden; /* Evita el scroll vertical */
         }
 
-        /* ESTO EVITA QUE SALGAN TODAS HACIA ABAJO */
         #flipbook {
-            display: none; /* Lo mantenemos oculto hasta que Turn.js lo organice */
+            visibility: hidden; /* En lugar de display:none para que el navegador calcule el tamaño */
+            opacity: 0;
+            margin: auto;
         }
 
         .page { 
             background-color: white; 
             box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            overflow: hidden;
         }
 
+        /* Forzamos a que las imágenes no se desparramen */
         .page img {
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
         }
 
         .btn-download { 
             background: #e60000; color: white; padding: 10px 20px; 
             text-decoration: none; border-radius: 5px; font-weight: bold; 
             font-family: sans-serif; margin: 15px; display: inline-block;
+            z-index: 100;
         }
     </style>
 </head>
@@ -60,20 +66,21 @@
             const fb = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // 1. Inyectamos las páginas
+            // Limpiamos e inyectamos
+            fb.empty();
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 fb.append('<div class="page"><img src="paginas/' + num + '.png"></div>');
             }
 
-            // 2. Medidas
+            // Medidas precisas A4
             let esMovil = $(window).width() < 768;
             let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
             let altoPagina = anchoPagina * 1.414;
 
-            // 3. LA CLAVE: Esperar un poquito y forzar el arranque
+            // EL TRUCO FINAL: Esperar a que el navegador "respire" y forzar el libro
             setTimeout(function() {
-                fb.show().turn({
+                fb.turn({
                     width: esMovil ? anchoPagina : anchoPagina * 2,
                     height: altoPagina,
                     display: esMovil ? 'single' : 'double',
@@ -89,7 +96,9 @@
                         }
                     }
                 });
-            }, 500);
+                // Una vez montado el libro, lo hacemos aparecer
+                fb.css({"visibility": "visible", "opacity": 1});
+            }, 800);
         });
     </script>
 </body>
