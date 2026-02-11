@@ -28,13 +28,14 @@
             margin-top: 10px;
         }
 
-        .grid-ediciones {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 50px;
-            padding: 60px 10%;
-            background-color: var(--negro);
-        }
+.grid-ediciones {
+    display: grid;
+    /* Cambiamos el minmax de 300px a 200px para permitir más columnas */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
+    gap: 30px;
+    padding: 40px 5%;
+    background-color: var(--negro);
+}
 
         .card-pais {
             text-decoration: none;
