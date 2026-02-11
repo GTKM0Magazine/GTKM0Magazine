@@ -203,13 +203,17 @@ $(async function(){
     gradients:true,
     elevation:50,
     when:{
-      turning:function(){
-        if(audio){
-          audio.currentTime=0;
-          audio.play().catch(()=>{});
-        }
+  turned:function(event, page){
+    if(page > 1){  // evita que suene al cargar
+      if(audio){
+        audio.pause();
+        audio.currentTime = 0;
+        audio.play().catch(()=>{});
       }
     }
+  }
+}
+
   });
 
   // Botones
