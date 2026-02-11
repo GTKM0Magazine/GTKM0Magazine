@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Global Tour Magazine</title>
+
+  <script src="https://unpkg.com/page-flip/dist/js/page-flip.browser.min.js"></script>
+
+  <style>
+    body{margin:0;font-family:system-ui;background:#0b0f14;color:#fff}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px 16px 36px}
+    .topbar{display:flex;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+    .btn{padding:8px 14px;border-radius:999px;text-decoration:none;color:#fff;background:#222;border:1px solid #444}
+    .card{background:#111;border-radius:18px;padding:16px}
+    #book{margin:0 auto;width:min(980px,100%);display:flex;justify-content:center}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <a class="btn" href="./index.html">← Volver</a>
+      <a class="btn" id="pdfBtn" href="#">⬇️ Descargar PDF</a>
+    </div>
+
+    <div class="card">
+      <div id="book"></div>
+    </div>
+  </div>
+
+<script>
+const id = "001";
+document.getElementById("pdfBtn").href = `./issues/${id}/magazine.pdf`;
+
+const pages = [];
+for(let i=1;i<=35;i++){
+  const n = String(i).padStart(3,"0");
+  pages.push(`./issues/${id}/pages/${n}.jpg`);
+}
+
+const bookEl = document.getElementById("book");
+const pageFlip = new St.PageFlip(bookEl, {
+  width: 840,
+  height: 594,
+  size: "stretch",
+  showCover: false
+});
+
+const htmlPages = pages.map(src => {
+  const div = document.createElement("div");
+  div.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:contain;background:#000;" />`;
+  return div;
+});
+
+pageFlip.loadFromHTML(htmlPages);
+</script>
+
+</body>
+</html>
