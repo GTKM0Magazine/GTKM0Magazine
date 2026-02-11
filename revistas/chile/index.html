@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edición Chile | Global Tour KM0</title>
+    <title>Edición Chile | GTKM0</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
     <style>
         body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
@@ -20,9 +20,7 @@
 
     <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
 
-    <div style="z-index: 100;">
-        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
-    </div>
+    <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
 
     <div class="magazine-viewport">
         <div id="flipbook">
@@ -35,36 +33,37 @@
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // 1. Generamos las páginas
+            // Inyectar páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 flipbook.append('<div class="page" style="background-image:url(paginas/' + num + '.png);"></div>');
             }
 
-            // 2. Cálculo de medidas para A4
+            // Medidas A4 corregidas
             let esMovil = $(window).width() < 768;
             let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
             let altoPagina = anchoPagina * 1.414;
 
-            // 3. Inicializamos Turn.js
+            // Inicialización definitiva
             setTimeout(function() {
-                flipbook.css("visibility", "visible").turn({
-                    width: esMovil ? anchoPagina : anchoPagina * 2,
-                    height: altoPagina,
-                    display: esMovil ? 'single' : 'double',
-                    autoCenter: true,
-                    acceleration: true,
-                    gradients: true,
-                    elevation: 50,
-                    when: {
-                        turning: function() {
-                            if (audio) {
-                                audio.currentTime = 0;
-                                audio.play().catch(function(e){});
+                if (typeof flipbook.turn === 'function') {
+                    flipbook.css("visibility", "visible").turn({
+                        width: esMovil ? anchoPagina : anchoPagina * 2,
+                        height: altoPagina,
+                        display: esMovil ? 'single' : 'double',
+                        autoCenter: true,
+                        acceleration: true,
+                        gradients: true,
+                        elevation: 50,
+                        when: {
+                            turning: function() {
+                                if (audio) { audio.currentTime = 0; audio.play().catch(function(e){}); }
                             }
                         }
-                    }
-                });
+                    });
+                } else {
+                    console.error("La librería Turn.js no se cargó correctamente.");
+                }
             }, 500);
         });
     </script>
