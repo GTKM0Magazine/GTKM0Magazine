@@ -4,56 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edición Chile | Global Tour KM0</title>
-    
     <link rel="stylesheet" href="../../assets/style.css">
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
-    
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        .magazine-viewport { margin-top: 50px; width: 100%; display: flex; justify-content: center; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
+        .magazine-viewport { margin-top: 20px; width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
+        #flipbook { visibility: hidden; }
         .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        #flipbook { visibility: hidden; } /* Se mostrará al cargar */
     </style>
 </head>
 <body>
-
-    <audio id="audioFlip" preload="auto">
-        <source src="../../assets/page-flip.mp3" type="audio/mpeg">
-    </audio>
-
-    <div style="padding: 20px; z-index: 100;">
+    <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
+    <div style="padding: 10px; z-index: 100;">
         <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
     </div>
 
     <div class="magazine-viewport">
         <div id="flipbook">
-            <div style="background-image:url(paginas/001.png);"></div>
-            <div style="background-image:url(paginas/002.png);"></div>
-            <div style="background-image:url(paginas/003.png);"></div>
-            <div style="background-image:url(paginas/004.png);"></div>
-        </div>
+            </div>
     </div>
 
     <script>
         $(window).on('load', function() {
+            const totalPaginas = 30; 
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
-            const totalPaginas = 30; // AJUSTA ESTO SI TIENES MÁS
 
-            // Añadimos el resto de páginas automáticamente
-            for (let i = 5; i <= totalPaginas; i++) {
+            // 1. Inyectar páginas dinámicamente
+            for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
-                flipbook.append('<div style="background-image:url(paginas/'+num+'.png);"></div>');
+                flipbook.append('<div class="page" style="background-image:url(paginas/'+num+'.png);"></div>');
             }
 
-            // Dimensiones para formato A4
+            // 2. Proporciones A4
             let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.85 : 420;
+            let anchoPagina = esMovil ? $(window).width() * 0.8 : 380; 
             let altoPagina = anchoPagina * 1.414;
 
-            // Arrancamos el flipbook
+            // 3. Inicializar Turn.js con retraso
             setTimeout(function() {
                 flipbook.css("visibility", "visible").turn({
                     width: esMovil ? anchoPagina : anchoPagina * 2,
@@ -61,6 +50,7 @@
                     display: esMovil ? 'single' : 'double',
                     autoCenter: true,
                     acceleration: true,
+                    gradients: true,
                     elevation: 50,
                     when: {
                         turning: function() {
@@ -68,7 +58,7 @@
                         }
                     }
                 });
-            }, 300);
+            }, 500);
         });
     </script>
 </body>
