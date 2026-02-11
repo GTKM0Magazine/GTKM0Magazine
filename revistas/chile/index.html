@@ -2,57 +2,21 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edición Chile | GTKM0</title>
-    
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
-        
-        /* BLOQUEO CRÍTICO: El contenedor NO permite que las fotos se vean hasta que el libro esté listo */
-        .magazine-viewport { 
-            margin-top: 20px;
-            width: 100vw; 
-            height: 90vh; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center;
-            overflow: hidden; /* Evita el scroll vertical */
-        }
-
-        #flipbook {
-            visibility: hidden; /* En lugar de display:none para que el navegador calcule el tamaño */
-            opacity: 0;
-            margin: auto;
-        }
-
-        .page { 
-            background-color: white; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            overflow: hidden;
-        }
-
-        /* Forzamos a que las imágenes no se desparramen */
-        .page img {
-            width: 100% !important;
-            height: 100% !important;
-            display: block;
-        }
-
-        .btn-download { 
-            background: #e60000; color: white; padding: 10px 20px; 
-            text-decoration: none; border-radius: 5px; font-weight: bold; 
-            font-family: sans-serif; margin: 15px; display: inline-block;
-            z-index: 100;
-        }
+        body { background-color: #1a1a1a; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow: hidden; }
+        .magazine-viewport { margin-top: 50px; }
+        #flipbook { display: none; } /* Se oculta hasta que el motor lo inicie */
+        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .btn-download { background: #e60000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-family: sans-serif; font-weight: bold; margin: 20px; display: inline-block; }
     </style>
 </head>
 <body>
 
     <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
-
     <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
 
     <div class="magazine-viewport">
@@ -61,44 +25,40 @@
     </div>
 
     <script type="text/javascript">
-        $(window).on('load', function() {
-            const totalPaginas = 30; 
-            const fb = $("#flipbook");
+        $(window).ready(function() {
+            const totalPaginas = 30;
+            const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // Limpiamos e inyectamos
-            fb.empty();
-            for (let i = 1; i <= totalPaginas; i++) {
-                let num = i.toString().padStart(3, '0');
-                fb.append('<div class="page"><img src="paginas/' + num + '.png"></div>');
-            }
-
-            // Medidas precisas A4
+            // 1. Calculamos medidas primero
             let esMovil = $(window).width() < 768;
             let anchoPagina = esMovil ? $(window).width() * 0.85 : 400;
             let altoPagina = anchoPagina * 1.414;
 
-            // EL TRUCO FINAL: Esperar a que el navegador "respire" y forzar el libro
-            setTimeout(function() {
-                fb.turn({
-                    width: esMovil ? anchoPagina : anchoPagina * 2,
-                    height: altoPagina,
-                    display: esMovil ? 'single' : 'double',
-                    autoCenter: true,
-                    acceleration: true,
-                    elevation: 50,
-                    when: {
-                        turning: function() {
-                            if (audio) {
-                                audio.currentTime = 0;
-                                audio.play().catch(function(){});
-                            }
-                        }
-                    }
+            // 2. Creamos las páginas una a una dentro del motor
+            for (let i = 1; i <= totalPaginas; i++) {
+                let num = i.toString().padStart(3, '0');
+                let elementoPagina = $('<div />', {
+                    'class': 'page',
+                    'style': 'background-image:url(paginas/' + num + '.png)'
                 });
-                // Una vez montado el libro, lo hacemos aparecer
-                fb.css({"visibility": "visible", "opacity": 1});
-            }, 800);
+                flipbook.append(elementoPagina);
+            }
+
+            // 3. Arrancamos el motor
+            flipbook.fadeIn(1000).turn({
+                width: esMovil ? anchoPagina : anchoPagina * 2,
+                height: altoPagina,
+                display: esMovil ? 'single' : 'double',
+                autoCenter: true,
+                acceleration: true,
+                elevation: 50,
+                when: {
+                    turning: function() {
+                        if (audio) { audio.currentTime = 0; audio.play().catch(function(){}); }
+                    }
+                }
+            });
         });
     </script>
 </body>
