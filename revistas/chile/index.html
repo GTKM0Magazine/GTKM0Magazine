@@ -7,34 +7,26 @@
     <link rel="stylesheet" href="../../assets/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="../../assets/turn.min.js"></script>
-    
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
-        .magazine-viewport { margin-top: 50px; width: 100%; display: flex; justify-content: center; visibility: hidden; }
+        body { background-color: #1a1a1a; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .magazine-viewport { margin-top: 40px; width: 100%; display: flex; justify-content: center; }
         .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
     </style>
 </head>
 <body>
-
-    <audio id="audioFlip" preload="auto">
-        <source src="../../assets/page-flip.mp3" type="audio/mpeg">
-    </audio>
-
-    <div class="header-tools" style="padding: 20px; z-index: 100;">
-        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR REVISTA EN PDF</a>
+    <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
+    <div style="padding: 20px; z-index: 100;">
+        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
     </div>
-
-    <div class="magazine-viewport" id="viewport">
+    <div class="magazine-viewport">
         <div id="flipbook"></div>
     </div>
-
     <script>
         $(window).on('load', function() {
             const totalPaginas = 30; 
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // Crear páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 let pagina = $('<div />', {
@@ -44,12 +36,10 @@
                 flipbook.append(pagina);
             }
 
-            // Dimensiones A4
             let esMovil = $(window).width() < 768;
             let anchoPagina = esMovil ? $(window).width() * 0.85 : 420;
             let altoPagina = anchoPagina * 1.414;
 
-            // Inicialización definitiva
             flipbook.turn({
                 width: esMovil ? anchoPagina : anchoPagina * 2,
                 height: altoPagina,
@@ -57,21 +47,12 @@
                 autoCenter: true,
                 acceleration: true,
                 gradients: true,
-                elevation: 50,
                 when: {
                     turning: function() {
-                        if (audio) {
-                            audio.currentTime = 0;
-                            audio.play().catch(function(error) {
-                                console.log("Audio en espera de interacción del usuario");
-                            });
-                        }
+                        if (audio) { audio.currentTime = 0; audio.play().catch(function(){}); }
                     }
                 }
             });
-            
-            // Mostrar cuando todo esté listo
-            $("#viewport").css("visibility", "visible");
         });
     </script>
 </body>
