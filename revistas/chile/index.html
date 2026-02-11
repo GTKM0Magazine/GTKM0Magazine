@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edición Chile | Global Tour KM0 Magazine</title>
-    
     <link rel="stylesheet" href="../../assets/style.css">
-    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
+    <script src="../../assets/turn.min.js"></script>
     
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .magazine-viewport { margin-top: 50px; width: 90%; display: flex; justify-content: center; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        .magazine-viewport { margin-top: 50px; width: 100%; display: flex; justify-content: center; visibility: hidden; }
         .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .header-tools { padding: 20px; z-index: 100; }
     </style>
 </head>
 <body>
@@ -23,22 +20,21 @@
         <source src="../../assets/page-flip.mp3" type="audio/mpeg">
     </audio>
 
-    <div class="header-tools">
-        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
+    <div class="header-tools" style="padding: 20px; z-index: 100;">
+        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR REVISTA EN PDF</a>
     </div>
 
-    <div class="magazine-viewport">
-        <div id="flipbook">
-            </div>
+    <div class="magazine-viewport" id="viewport">
+        <div id="flipbook"></div>
     </div>
 
     <script>
-        $(document).ready(function() {
-            const totalPaginas = 30; // Verifica que este número sea exacto
+        $(window).on('load', function() {
+            const totalPaginas = 30; 
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // Crear las páginas con formato 001.png
+            // Crear páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 let pagina = $('<div />', {
@@ -48,33 +44,34 @@
                 flipbook.append(pagina);
             }
 
-            // Dimensiones para A4
-            let anchoVentana = $(window).width();
-            let esMovil = anchoVentana < 768;
-            let anchoPagina = esMovil ? anchoVentana * 0.85 : 420;
+            // Dimensiones A4
+            let esMovil = $(window).width() < 768;
+            let anchoPagina = esMovil ? $(window).width() * 0.85 : 420;
             let altoPagina = anchoPagina * 1.414;
 
-            // Inicialización forzada
-            setTimeout(function() {
-                flipbook.turn({
-                    width: esMovil ? anchoPagina : anchoPagina * 2,
-                    height: altoPagina,
-                    display: esMovil ? 'single' : 'double',
-                    autoCenter: true,
-                    acceleration: true,
-                    gradients: true,
-                    elevation: 50,
-                    when: {
-                        turning: function() {
-                            if (audio) {
-                                audio.pause();
-                                audio.currentTime = 0;
-                                audio.play().catch(() => {}); // Evita error de navegador
-                            }
+            // Inicialización definitiva
+            flipbook.turn({
+                width: esMovil ? anchoPagina : anchoPagina * 2,
+                height: altoPagina,
+                display: esMovil ? 'single' : 'double',
+                autoCenter: true,
+                acceleration: true,
+                gradients: true,
+                elevation: 50,
+                when: {
+                    turning: function() {
+                        if (audio) {
+                            audio.currentTime = 0;
+                            audio.play().catch(function(error) {
+                                console.log("Audio en espera de interacción del usuario");
+                            });
                         }
                     }
-                });
-            }, 500); // Pequeña pausa para asegurar carga
+                }
+            });
+            
+            // Mostrar cuando todo esté listo
+            $("#viewport").css("visibility", "visible");
         });
     </script>
 </body>
