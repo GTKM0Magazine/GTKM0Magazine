@@ -3,47 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edición Chile | Global Tour KM0</title>
+    <title>Edición Chile | Global Tour KM0 Magazine</title>
     
     <link rel="stylesheet" href="../../assets/style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.rawgit.com/blasten/turn.js/master/turn.min.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js@master/turn.min.js"></script>
     
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; overflow: hidden; }
-        
-        .magazine-viewport {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #flipbook {
-            display: none; /* Se oculta hasta que esté listo para evitar el flash */
-        }
-
-        .page {
-            background-color: white;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        /* Contenedor del botón para que no estorbe al flipbook */
-        .header-tools {
-            position: absolute;
-            top: 20px;
-            width: 100%;
-            text-align: center;
-            z-index: 1000;
-        }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .magazine-viewport { margin-top: 50px; width: 90%; display: flex; justify-content: center; }
+        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .header-tools { padding: 20px; z-index: 100; }
     </style>
 </head>
 <body>
 
-    <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
+    <audio id="audioFlip" preload="auto">
+        <source src="../../assets/page-flip.mp3" type="audio/mpeg">
+    </audio>
 
     <div class="header-tools">
         <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
@@ -55,47 +33,49 @@
     </div>
 
     <script>
-        $(window).ready(function() {
-            const totalPaginas = 30; // Asegúrate de que tienes de la 001.png a la 030.png
+        $(document).ready(function() {
+            const totalPaginas = 30; // Verifica que este número sea exacto
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // 1. Forzar la creación de páginas
+            // Crear las páginas con formato 001.png
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 let pagina = $('<div />', {
-                    'class': 'page'
-                }).css('background-image', 'url(paginas/' + num + '.png)');
+                    'class': 'page',
+                    'style': 'background-image:url(paginas/' + num + '.png);'
+                });
                 flipbook.append(pagina);
             }
 
-            // 2. Cálculo de dimensiones
-            let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.8 : 400; 
+            // Dimensiones para A4
+            let anchoVentana = $(window).width();
+            let esMovil = anchoVentana < 768;
+            let anchoPagina = esMovil ? anchoVentana * 0.85 : 420;
             let altoPagina = anchoPagina * 1.414;
 
-            // 3. Inicializar y MOSTRAR
-            flipbook.show().turn({
-                width: esMovil ? anchoPagina : anchoPagina * 2,
-                height: altoPagina,
-                display: esMovil ? 'single' : 'double',
-                autoCenter: true,
-                acceleration: true,
-                gradients: true,
-                elevation: 50,
-                when: {
-                    turning: function(event, page, view) {
-                        if (audio) {
-                            audio.currentTime = 0;
-                            audio.play().catch(function(e){ console.log("Audio bloqueado hasta interacción"); });
+            // Inicialización forzada
+            setTimeout(function() {
+                flipbook.turn({
+                    width: esMovil ? anchoPagina : anchoPagina * 2,
+                    height: altoPagina,
+                    display: esMovil ? 'single' : 'double',
+                    autoCenter: true,
+                    acceleration: true,
+                    gradients: true,
+                    elevation: 50,
+                    when: {
+                        turning: function() {
+                            if (audio) {
+                                audio.pause();
+                                audio.currentTime = 0;
+                                audio.play().catch(() => {}); // Evita error de navegador
+                            }
                         }
                     }
-                }
-            });
+                });
+            }, 500); // Pequeña pausa para asegurar carga
         });
-
-        // Recargar al girar el dispositivo para ajustar tamaño
-        window.addEventListener('orientationchange', function() { location.reload(); });
     </script>
 </body>
 </html>
