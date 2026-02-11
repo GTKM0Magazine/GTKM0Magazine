@@ -10,43 +10,72 @@
     <script src="https://cdn.rawgit.com/blasten/turn.js/master/turn.min.js"></script>
     
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding-top: 20px; overflow-x: hidden; }
-        .magazine-viewport { width: 100%; height: 85vh; display: flex; justify-content: center; align-items: center; }
-        .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; overflow: hidden; }
+        
+        .magazine-viewport {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #flipbook {
+            display: none; /* Se oculta hasta que esté listo para evitar el flash */
+        }
+
+        .page {
+            background-color: white;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Contenedor del botón para que no estorbe al flipbook */
+        .header-tools {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
 
     <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
 
-    <div class="download-container" style="text-align: center; margin-bottom: 10px;">
-        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF EDICIÓN CHILE</a>
+    <div class="header-tools">
+        <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
     </div>
 
     <div class="magazine-viewport">
-        <div id="flipbook"></div>
+        <div id="flipbook">
+            </div>
     </div>
 
     <script>
         $(window).ready(function() {
-            const totalPaginas = 30; 
+            const totalPaginas = 30; // Asegúrate de que tienes de la 001.png a la 030.png
             const flipbook = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
+            // 1. Forzar la creación de páginas
             for (let i = 1; i <= totalPaginas; i++) {
                 let num = i.toString().padStart(3, '0');
                 let pagina = $('<div />', {
-                    'class': 'page',
-                    'style': `background-image:url(paginas/${num}.png);`
-                });
+                    'class': 'page'
+                }).css('background-image', 'url(paginas/' + num + '.png)');
                 flipbook.append(pagina);
             }
 
+            // 2. Cálculo de dimensiones
             let esMovil = $(window).width() < 768;
-            let anchoPagina = esMovil ? $(window).width() * 0.85 : 420; 
+            let anchoPagina = esMovil ? $(window).width() * 0.8 : 400; 
             let altoPagina = anchoPagina * 1.414;
 
-            flipbook.turn({
+            // 3. Inicializar y MOSTRAR
+            flipbook.show().turn({
                 width: esMovil ? anchoPagina : anchoPagina * 2,
                 height: altoPagina,
                 display: esMovil ? 'single' : 'double',
@@ -54,17 +83,19 @@
                 acceleration: true,
                 gradients: true,
                 elevation: 50,
-                // AQUÍ ACTIVAMOS EL SONIDO
                 when: {
                     turning: function(event, page, view) {
-                        audio.currentTime = 0; // Reinicia el sonido por si pasan páginas rápido
-                        audio.play();
+                        if (audio) {
+                            audio.currentTime = 0;
+                            audio.play().catch(function(e){ console.log("Audio bloqueado hasta interacción"); });
+                        }
                     }
                 }
             });
         });
 
-        $(window).resize(function() { location.reload(); });
+        // Recargar al girar el dispositivo para ajustar tamaño
+        window.addEventListener('orientationchange', function() { location.reload(); });
     </script>
 </body>
 </html>
