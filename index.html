@@ -3,55 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Tour KM0 - La Revista</title>
+    <title>Global Tour KMO | Archivo de Revistas</title>
     <link rel="stylesheet" href="assets/style.css">
-    <link rel="icon" href="assets/favicon.ico"> </head>
+    <style>
+        /* Estilos específicos para la portada */
+        header {
+            background-color: var(--rojo-alboran);
+            padding: 80px 20px;
+            text-align: center;
+            color: var(--blanco);
+        }
+
+        .logo-tour {
+            font-family: 'Miracle', serif; /* Tu fuente personalizada */
+            font-size: 5rem;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .archivo-subtitle {
+            font-family: 'BigShoulders', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 5px;
+            margin-top: 10px;
+        }
+
+        .grid-ediciones {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            padding: 60px 10%;
+            background-color: var(--negro);
+        }
+
+        .card-pais {
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .card-pais:hover {
+            transform: scale(1.05);
+        }
+
+        .portada-preview {
+            width: 100%;
+            aspect-ratio: 3/4;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .info-pais {
+            margin-top: 15px;
+            text-align: left;
+        }
+
+        .nombre-pais {
+            font-family: 'BigShoulders', sans-serif;
+            font-weight: bold;
+            font-size: 2rem;
+            color: var(--blanco);
+            text-transform: uppercase;
+        }
+
+        .fecha-tour {
+            color: var(--rojo-alboran);
+            font-family: 'BigShoulders', sans-serif;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
 <body>
 
     <header>
-        <h1>Global Tour KM0: La Revista</h1>
-        <p>Un viaje por las expectativas, sueños y el corazón de los fans de Pablo Alborán en cada rincón del mundo, un kilómetro cero de emociones que están a punto de comenzar.</p>
+        <h1 class="logo-tour">Global Tour Km0</h1>
+        <div class="archivo-subtitle">ARCHIVO INTERNACIONAL DE REVISTAS</div>
     </header>
 
-    <main class="container">
-        <section class="grid-ediciones">
-<article class="card">
-                <img src="assets/portadas/chile.png" alt="Portada Chile" class="card-image">
-                <div class="card-content">
-                    <h3>🇨🇱 Edición Chile</h3>
-                    <div class="card-actions">
-                        <a href="revistas/chile/index.html" class="btn btn-primary">Leer Ahora</a>
-                        <a href="revistas/espana/revista.pdf" download="Revista_Chile_KM0.pdf" class="btn btn-secondary">Descargar PDF</a>
-                    </div>
-                </div>
-            </article>
+    <main class="grid-ediciones">
+        
+        <a href="revistas/chile/index.html" class="card-pais">
+            <div class="portada-preview" style="background-image: url('revistas/chile/paginas/001.png');"></div>
+            <div class="info-pais">
+                <div class="nombre-pais">Chile</div>
+                <div class="fecha-tour">28 FEBRERO 2026</div>
+            </div>
+        </a>
 
-            <article class="card">
-                <img src="assets/portadas/espana.jpg" alt="Portada España" class="card-image">
-                <div class="card-content">
-                    <h3>🇪🇸 Edición España</h3>
-                    <div class="card-actions">
-                        <a href="revistas/espana/index.html" class="btn btn-primary">Leer Ahora</a>
-                        <a href="revistas/espana/revista.pdf" download="Revista_España_KM0.pdf" class="btn btn-secondary">Descargar PDF</a>
-                    </div>
-                </div>
-            </article>
-            <article class="card">
-                <img src="assets/portadas/mexico.jpg" alt="Portada México" class="card-image">
-                <div class="card-content">
-                    <h3>🇲🇽 Edición México</h3>
-                    <div class="card-actions">
-                        <a href="revistas/mexico/index.html" class="btn btn-primary">Leer Ahora</a>
-                        <a href="revistas/mexico/revista.pdf" download="Revista_México_KM0.pdf" class="btn btn-secondary">Descargar PDF</a>
-                    </div>
-                </div>
-            </article>
+        </main>
 
-            </section>
-    </main>
-
-    <footer>
-        <p>&copy; 2026 Global Tour KM0. Un proyecto de fans para fans con amor.</p>
+    <footer style="color: #666; text-align: center; padding: 40px; font-size: 0.8rem; background: #111;">
+        <p>Un proyecto colaborativo de fans para fans.</p>
     </footer>
 
 </body>
