@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revista Chile | KM0</title>
+    <title>Edición Chile | Global Tour KM0</title>
     
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.rawgit.com/blasten/turn.js/master/turn.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    
+    <script src="https://gtkm0magazine.github.io/GTKM0Magazine/assets/turn.min.js"></script>
 
+    <link rel="stylesheet" href="../../assets/style.css">
+    
     <style>
-        body { background-color: #1a1a1a; margin: 0; padding: 0; text-align: center; overflow-x: hidden; }
-        .magazine-viewport { margin-top: 50px; display: inline-block; }
+        body { background-color: #1a1a1a; margin: 0; padding: 0; text-align: center; }
+        .magazine-viewport { margin-top: 50px; display: inline-block; width: 100%; }
         .page { background-color: white; background-size: 100% 100%; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        .btn-download { background: #e60000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px; font-family: sans-serif; font-weight: bold; }
+        .btn-download { background: #e60000; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin: 20px; font-family: sans-serif; }
     </style>
 </head>
 <body>
 
-    <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
+    <audio id="audioFlip" src="https://gtkm0magazine.github.io/GTKM0Magazine/assets/page-flip.mp3"></audio>
 
     <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF CHILE</a>
 
@@ -27,35 +30,41 @@
     </div>
 
     <script>
-        $(window).on('load', function() {
-            const total = 30; // Total de tus páginas
+        $(document).ready(function() {
+            const total = 30;
             const fb = $("#flipbook");
             const audio = document.getElementById("audioFlip");
 
-            // Inyectar páginas
+            // Inyectar páginas - RUTA RELATIVA DIRECTA
             for (let i = 1; i <= total; i++) {
                 let n = i.toString().padStart(3, '0');
                 fb.append('<div class="page" style="background-image:url(paginas/'+n+'.png);"></div>');
             }
 
-            // Forzar medidas A4
+            // Medidas A4
             let w = $(window).width() < 768 ? $(window).width() * 0.9 : 400;
             let h = w * 1.414;
 
-            // Inicializar Turn.js
-            fb.turn({
-                width: $(window).width() < 768 ? w : w * 2,
-                height: h,
-                display: $(window).width() < 768 ? 'single' : 'double',
-                autoCenter: true,
-                acceleration: true,
-                gradients: true,
-                when: {
-                    turning: function() {
-                        if (audio) { audio.currentTime = 0; audio.play().catch(function(){}); }
-                    }
+            // Esperar un momento a que Turn.js cargue desde Assets
+            setTimeout(function() {
+                if ($.isFunction(fb.turn)) {
+                    fb.turn({
+                        width: $(window).width() < 768 ? w : w * 2,
+                        height: h,
+                        display: $(window).width() < 768 ? 'single' : 'double',
+                        autoCenter: true,
+                        acceleration: true,
+                        gradients: true,
+                        when: {
+                            turning: function() {
+                                if (audio) { audio.currentTime = 0; audio.play().catch(function(){}); }
+                            }
+                        }
+                    });
+                } else {
+                    console.error("No se pudo cargar turn.min.js desde assets");
                 }
-            });
+            }, 500);
         });
     </script>
 </body>
