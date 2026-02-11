@@ -1,13 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Revista Chile | GTKM0</title>
-
-  <!-- DEFER evita carreras: el script se ejecuta cuando el HTML ya está parseado -->
-  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
   <style>
     body{
@@ -18,8 +14,8 @@
       display:flex;
       justify-content:center;
       align-items:center;
+      font-family:Arial, sans-serif;
     }
-
     .magazine-viewport{
       width:100vw;
       height:100vh;
@@ -30,34 +26,27 @@
       position:relative;
     }
 
-    /* Reserva tamaño antes de turn() para evitar height:0 */
     #flipbook{
-      width: 840px;            /* doble página */
-      height: 594px;           /* A4 aprox (420x594 por página) */
-      opacity:0;               /* oculto hasta listo */
+      width:840px;
+      height:594px;
+      opacity:0;
       pointer-events:none;
-      transition: opacity .25s ease-in;
+      transition:opacity .25s ease-in;
     }
-
-    /* Móvil: 1 página y responsive real */
-    @media (max-width: 768px){
+    @media (max-width:768px){
       #flipbook{
-        width: 90vw;
-        height: calc(90vw * 1.414);
+        width:90vw;
+        height:calc(90vw * 1.414);
       }
     }
 
     .page{
       width:420px;
       height:594px;
-      background-color:#fff;
-      background-size:contain;
-      background-position:center;
-      background-repeat:no-repeat;
+      background:#fff center/contain no-repeat;
       box-shadow:0 0 20px rgba(0,0,0,.5);
     }
 
-    /* Botón descarga */
     .btn-download{
       position:absolute;
       top:15px;
@@ -67,13 +56,11 @@
       padding:10px 15px;
       text-decoration:none;
       border-radius:6px;
-      font-family:Arial, sans-serif;
       font-size:12px;
       font-weight:bold;
       z-index:9999;
     }
 
-    /* Mensaje de carga */
     .loading{
       position:absolute;
       inset:0;
@@ -81,45 +68,34 @@
       align-items:center;
       justify-content:center;
       color:rgba(255,255,255,.75);
-      font-family:Arial, sans-serif;
       font-size:13px;
       letter-spacing:.2px;
       pointer-events:none;
     }
-    .hidden{ display:none; }
   </style>
 </head>
 
 <body>
   <div class="magazine-viewport">
     <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF</a>
-
-    <!-- Ruta robusta (sin ../../) -->
     <audio id="audioFlip" preload="auto" src="/GTKM0Magazine/assets/page-flip.mp3"></audio>
 
-    <div id="flipbook" aria-label="Revista interactiva"></div>
+    <div id="flipbook"></div>
     <div id="loading" class="loading">Cargando revista…</div>
   </div>
 
-  <script>
-    // Espera a que turn.js esté disponible
-    function waitForTurn(){
-      return new Promise(resolve=>{
-        const t = setInterval(()=>{
-          if (window.jQuery && jQuery.fn && typeof jQuery.fn.turn === "function"){
-            clearInterval(t);
-            resolve();
-          }
-        }, 50);
-      });
-    }
+  <!-- Librerías: SIEMPRE antes de tu script -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
-    // Precarga de imágenes (devuelve array de true/false)
+  <script>
     function preload(urls){
+      const TIMEOUT = 6000;
       return Promise.all(urls.map(u => new Promise(res=>{
         const img = new Image();
-        img.onload = () => res(true);
-        img.onerror = () => res(false);
+        const t = setTimeout(()=>res(false), TIMEOUT);
+        img.onload = ()=>{ clearTimeout(t); res(true); };
+        img.onerror = ()=>{ clearTimeout(t); res(false); };
         img.src = u;
       })));
     }
@@ -138,70 +114,68 @@
       };
     }
 
-    (async function(){
-      const totalPaginas = 30;
-      const fb = $("#flipbook");
+    // ✅ IMPORTANTE: arranca dentro de jQuery ready (garantiza $ definido)
+    $(function(){
       const loading = document.getElementById("loading");
+
+      if(!(jQuery.fn && typeof jQuery.fn.turn === "function")){
+        loading.textContent = "No se cargó turn.js (CDN bloqueado).";
+        return;
+      }
+
+      const fb = $("#flipbook");
       const audio = document.getElementById("audioFlip");
 
-      // IMPORTANTE: ruta absoluta dentro del repo (no depende de dónde esté el HTML)
+      const totalPaginas = 30;
       const PAGE_BASE = "/GTKM0Magazine/revistas/chile/paginas/";
 
-      await waitForTurn();
-
-      // 1) Inyectar páginas
       fb.empty();
       for(let i=1;i<=totalPaginas;i++){
         const num = String(i).padStart(3,"0");
         fb.append(`<div class="page" style="background-image:url('${PAGE_BASE}${num}.png')"></div>`);
       }
 
-      // 2) Precargar primeras páginas para evitar negro/desparrame
-      const first = [1,2,3,4,5,6].filter(n=>n<=totalPaginas)
-        .map(n => PAGE_BASE + String(n).padStart(3,"0") + ".png");
+      const first = [1,2,3,4,5,6].map(n => PAGE_BASE + String(n).padStart(3,"0") + ".png");
 
-      const ok = await preload(first);
-      if(ok.every(v=>!v)){
-        loading.textContent = "No se han podido cargar las páginas (revisa nombres/rutas).";
-        console.error("No carga ninguna de las primeras páginas:", first);
-        return;
-      }
+      preload(first).then(ok=>{
+        if(ok.every(v=>!v)){
+          loading.textContent = "No se cargan las páginas (ruta/nombres).";
+          console.error("Preload fail:", first);
+          return;
+        }
 
-      // 3) Tamaños + init
-      const d = dims();
-      $(".page").css({ width: d.pageW + "px", height: d.pageH + "px" });
+        const d = dims();
+        $(".page").css({ width: d.pageW+"px", height: d.pageH+"px" });
 
-      // Si por lo que sea quedó inicializado antes, destruye
-      try { fb.turn("destroy"); } catch(e) {}
+        try { fb.turn("destroy"); } catch(e) {}
 
-      fb.turn({
-        width: d.width,
-        height: d.height,
-        display: d.display,
-        autoCenter: true,
-        acceleration: true,
-        gradients: true,
-        elevation: 50,
-        when: {
-          turning: function(){
-            if(audio){
-              audio.currentTime = 0;
-              audio.play().catch(()=>{});
+        fb.turn({
+          width: d.width,
+          height: d.height,
+          display: d.display,
+          autoCenter: true,
+          acceleration: true,
+          gradients: true,
+          elevation: 50,
+          when: {
+            turning: function(){
+              if(audio){
+                audio.currentTime = 0;
+                audio.play().catch(()=>{});
+              }
             }
           }
-        }
+        });
+
+        fb.css({ opacity: 1, pointerEvents: "auto" });
+        loading.style.display = "none";
       });
+    });
 
-      // 4) Mostrar
-      fb.css({ opacity: 1, pointerEvents: "auto" });
-      loading.classList.add("hidden");
-    })();
-
-    // Reinit simple en cambios de tamaño/orientación
     let rt;
-    window.addEventListener("resize", () => {
+    window.addEventListener("resize", ()=>{
       clearTimeout(rt);
-      rt = setTimeout(() => location.reload(), 250);
+      rt = setTimeout(()=>location.reload(), 250);
     });
   </script>
 </body>
