@@ -1,119 +1,208 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revista Chile | GTKM0</title>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revista Chile | GTKM0</title>
 
-    <style>
-        /* 1. Fondo y limpieza */
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; /* Prohibido el scroll vertical */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  <!-- DEFER evita carreras: el script se ejecuta cuando el HTML ya está parseado -->
+  <script defer src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/turn.js@4.1.0/turn.min.js"></script>
 
-        /* 2. El escenario (Viewport) */
-        .magazine-viewport {
-            width: 100vw;
-            height: 90vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <style>
+    body{
+      background:#1a1a1a;
+      margin:0;
+      overflow:hidden;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
 
-        /* 3. El libro (Oculto hasta que esté listo) */
-        #flipbook {
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.4s ease-in;
-        }
+    .magazine-viewport{
+      width:100vw;
+      height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:hidden;
+      position:relative;
+    }
 
-        .page {
-            background-color: white;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
+    /* Reserva tamaño antes de turn() para evitar height:0 */
+    #flipbook{
+      width: 840px;            /* doble página */
+      height: 594px;           /* A4 aprox (420x594 por página) */
+      opacity:0;               /* oculto hasta listo */
+      pointer-events:none;
+      transition: opacity .25s ease-in;
+    }
 
-        /* 4. Botón de descarga (flotante para no molestar) */
-        .btn-download {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            background: #e60000;
-            color: white;
-            padding: 10px 15px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-family: Arial, sans-serif;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 9999;
-        }
-    </style>
+    /* Móvil: 1 página y responsive real */
+    @media (max-width: 768px){
+      #flipbook{
+        width: 90vw;
+        height: calc(90vw * 1.414);
+      }
+    }
+
+    .page{
+      width:420px;
+      height:594px;
+      background-color:#fff;
+      background-size:contain;
+      background-position:center;
+      background-repeat:no-repeat;
+      box-shadow:0 0 20px rgba(0,0,0,.5);
+    }
+
+    /* Botón descarga */
+    .btn-download{
+      position:absolute;
+      top:15px;
+      left:15px;
+      background:#e60000;
+      color:#fff;
+      padding:10px 15px;
+      text-decoration:none;
+      border-radius:6px;
+      font-family:Arial, sans-serif;
+      font-size:12px;
+      font-weight:bold;
+      z-index:9999;
+    }
+
+    /* Mensaje de carga */
+    .loading{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:rgba(255,255,255,.75);
+      font-family:Arial, sans-serif;
+      font-size:13px;
+      letter-spacing:.2px;
+      pointer-events:none;
+    }
+    .hidden{ display:none; }
+  </style>
 </head>
+
 <body>
-
+  <div class="magazine-viewport">
     <a href="revista_chile.pdf" class="btn-download" download>DESCARGAR PDF</a>
-    <audio id="audioFlip" src="../../assets/page-flip.mp3"></audio>
 
-    <div class="magazine-viewport">
-        <div id="flipbook">
-            </div>
-    </div>
+    <!-- Ruta robusta (sin ../../) -->
+    <audio id="audioFlip" preload="auto" src="/GTKM0Magazine/assets/page-flip.mp3"></audio>
 
-    <script type="text/javascript">
-        $(window).on('load', function() {
-            const totalPaginas = 30; 
-            const fb = $("#flipbook");
-            const audio = document.getElementById("audioFlip");
+    <div id="flipbook" aria-label="Revista interactiva"></div>
+    <div id="loading" class="loading">Cargando revista…</div>
+  </div>
 
-            // Paso A: Crear los divs de las páginas
-            for (let i = 1; i <= totalPaginas; i++) {
-                let num = i.toString().padStart(3, '0');
-                // Ruta relativa: paginas/001.png, etc.
-                fb.append('<div class="page" style="background-image:url(paginas/' + num + '.png);"></div>');
+  <script>
+    // Espera a que turn.js esté disponible
+    function waitForTurn(){
+      return new Promise(resolve=>{
+        const t = setInterval(()=>{
+          if (window.jQuery && jQuery.fn && typeof jQuery.fn.turn === "function"){
+            clearInterval(t);
+            resolve();
+          }
+        }, 50);
+      });
+    }
+
+    // Precarga de imágenes (devuelve array de true/false)
+    function preload(urls){
+      return Promise.all(urls.map(u => new Promise(res=>{
+        const img = new Image();
+        img.onload = () => res(true);
+        img.onerror = () => res(false);
+        img.src = u;
+      })));
+    }
+
+    function dims(){
+      const esMovil = window.matchMedia("(max-width: 768px)").matches;
+      const singleW = Math.floor(Math.min(window.innerWidth * 0.9, 420));
+      const singleH = Math.floor(singleW * 1.414);
+      return {
+        esMovil,
+        pageW: esMovil ? singleW : 420,
+        pageH: esMovil ? singleH : 594,
+        width: esMovil ? singleW : 840,
+        height: esMovil ? singleH : 594,
+        display: esMovil ? "single" : "double"
+      };
+    }
+
+    (async function(){
+      const totalPaginas = 30;
+      const fb = $("#flipbook");
+      const loading = document.getElementById("loading");
+      const audio = document.getElementById("audioFlip");
+
+      // IMPORTANTE: ruta absoluta dentro del repo (no depende de dónde esté el HTML)
+      const PAGE_BASE = "/GTKM0Magazine/revistas/chile/paginas/";
+
+      await waitForTurn();
+
+      // 1) Inyectar páginas
+      fb.empty();
+      for(let i=1;i<=totalPaginas;i++){
+        const num = String(i).padStart(3,"0");
+        fb.append(`<div class="page" style="background-image:url('${PAGE_BASE}${num}.png')"></div>`);
+      }
+
+      // 2) Precargar primeras páginas para evitar negro/desparrame
+      const first = [1,2,3,4,5,6].filter(n=>n<=totalPaginas)
+        .map(n => PAGE_BASE + String(n).padStart(3,"0") + ".png");
+
+      const ok = await preload(first);
+      if(ok.every(v=>!v)){
+        loading.textContent = "No se han podido cargar las páginas (revisa nombres/rutas).";
+        console.error("No carga ninguna de las primeras páginas:", first);
+        return;
+      }
+
+      // 3) Tamaños + init
+      const d = dims();
+      $(".page").css({ width: d.pageW + "px", height: d.pageH + "px" });
+
+      // Si por lo que sea quedó inicializado antes, destruye
+      try { fb.turn("destroy"); } catch(e) {}
+
+      fb.turn({
+        width: d.width,
+        height: d.height,
+        display: d.display,
+        autoCenter: true,
+        acceleration: true,
+        gradients: true,
+        elevation: 50,
+        when: {
+          turning: function(){
+            if(audio){
+              audio.currentTime = 0;
+              audio.play().catch(()=>{});
             }
+          }
+        }
+      });
 
-            // Paso B: Calcular medidas según pantalla
-            let esMovil = $(window).width() < 768;
-            let anchoDeseado = esMovil ? $(window).width() * 0.9 : 420;
-            let altoDeseado = anchoDeseado * 1.414; // Proporción A4
+      // 4) Mostrar
+      fb.css({ opacity: 1, pointerEvents: "auto" });
+      loading.classList.add("hidden");
+    })();
 
-            // Paso C: Arrancar Turn.js
-            // Usamos un pequeño delay para asegurar que el navegador registró los divs
-            setTimeout(function() {
-                fb.turn({
-                    width: esMovil ? anchoDeseado : anchoDeseado * 2,
-                    height: altoDeseado,
-                    display: esMovil ? 'single' : 'double',
-                    autoCenter: true,
-                    acceleration: true,
-                    elevation: 50,
-                    gradients: true,
-                    when: {
-                        turning: function() {
-                            if (audio) {
-                                audio.currentTime = 0;
-                                audio.play().catch(function(){});
-                            }
-                        }
-                    }
-                });
-                
-                // Paso D: Mostrar el libro de golpe
-                fb.css({ "visibility": "visible", "opacity": 1 });
-            }, 300);
-        });
-    </script>
+    // Reinit simple en cambios de tamaño/orientación
+    let rt;
+    window.addEventListener("resize", () => {
+      clearTimeout(rt);
+      rt = setTimeout(() => location.reload(), 250);
+    });
+  </script>
 </body>
 </html>
