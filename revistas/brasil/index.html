@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revista Brasil | GTKM0</title>
+
+<style>
+body{
+  background:#1a1a1a;
+  margin:0;
+  overflow:hidden;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-family:Arial, sans-serif;
+}
+
+.magazine-viewport{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position:relative;
+}
+
+/* Libro */
+#flipbook{
+  width:1000px;
+  height:707px;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease-in;
+}
+
+@media (max-width: 900px){
+  #flipbook{
+    width:90vw;
+    height:calc(90vw * 1.414);
+  }
+}
+
+.page{
+  width:500px;
+  height:707px;
+  background:#fff center/contain no-repeat;
+  box-shadow:0 0 20px rgba(0,0,0,.5);
+}
+
+/* Botón descarga */
+.btn-download{
+  position:absolute;
+  top:20px;
+  left:20px;
+  background:#e60000;
+  color:#fff;
+  padding:10px 15px;
+  text-decoration:none;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:bold;
+  z-index:9999;
+}
+
+/* Loader */
+#loading{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:rgba(255,255,255,.75);
+  font-size:14px;
+  pointer-events:none;
+}
+
+/* Flechas navegación */
+.nav{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:50px;
+  height:50px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.3);
+  background:rgba(0,0,0,.4);
+  color:#fff;
+  font-size:30px;
+  cursor:pointer;
+  z-index:9998;
+  user-select:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.nav.prev{ left:15px; }
+.nav.next{ right:15px; }
+
+.nav:hover{
+  background:rgba(0,0,0,.7);
+}
+</style>
+</head>
+
+<body>
+
+<div class="magazine-viewport">
+
+  <a href="revista_brasil.pdf" class="btn-download" download>DESCARGAR PDF</a>
+  <audio id="audioFlip" preload="auto" src="/GTKM0Magazine/assets/page-flip.mp3"></audio>
+
+  <div id="flipbook"></div>
+  <div id="loading">Cargando revista…</div>
+
+  <div class="nav prev">‹</div>
+  <div class="nav next">›</div>
+
+</div>
+
+<!-- jQuery (puede seguir por CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- turn.js LOCAL (este ya lo tienes en /assets/) -->
+<script src="/GTKM0Magazine/assets/turn.min.js"></script>
+
+<script>
+function preload(urls){
+  return Promise.all(urls.map(u => new Promise(res=>{
+    const img = new Image();
+    img.onload = ()=>res(true);
+    img.onerror = ()=>res(false);
+    img.src = u;
+  })));
+}
+
+function getDims(){
+  const esMovil = window.innerWidth < 900;
+  const pageW = esMovil ? Math.floor(window.innerWidth * 0.9) : 500;
+  const pageH = Math.floor(pageW * 1.414);
+  return {
+    esMovil,
+    pageW,
+    pageH,
+    width: esMovil ? pageW : pageW * 2,
+    height: pageH,
+    display: esMovil ? "single" : "double"
+  };
+}
+
+$(async function(){
+
+  const fb = $("#flipbook");
+  const audio = document.getElementById("audioFlip");
+  const loading = document.getElementById("loading");
+
+  if(!(jQuery.fn && typeof jQuery.fn.turn === "function")){
+    loading.textContent = "turn.js no cargó (revisa /assets/turn.min.js)";
+    return;
+  }
+
+  const totalPaginas = 30;
+  const PAGE_BASE = "/GTKM0Magazine/revistas/brasil/paginas/";
+
+  // Crear páginas
+  for(let i=1;i<=totalPaginas;i++){
+    const num = String(i).padStart(3,"0");
+    fb.append(`<div class="page" style="background-image:url('${PAGE_BASE}${num}.png')"></div>`);
+  }
+
+  // Precargar primeras
+  const primeras = [1,2,3,4,5,6].map(n =>
+    PAGE_BASE + String(n).padStart(3,"0") + ".png"
+  );
+
+  const ok = await preload(primeras);
+
+  if(ok.every(v=>!v)){
+    loading.textContent = "No se cargan las páginas.";
+    return;
+  }
+
+  const d = getDims();
+
+  $(".page").css({
+    width: d.pageW + "px",
+    height: d.pageH + "px"
+  });
+
+  fb.css({
+    width: d.width + "px",
+    height: d.height + "px"
+  });
+
+  fb.turn({
+    width: d.width,
+    height: d.height,
+    display: d.display,
+    autoCenter:true,
+    acceleration:true,
+    gradients:true,
+    elevation:50,
+    when:{
+  turned:function(event, page){
+    if(page > 1){  // evita que suene al cargar
+      if(audio){
+        audio.pause();
+        audio.currentTime = 0;
+        audio.play().catch(()=>{});
+      }
+    }
+  }
+}
+
+  });
+
+  // Botones
+  $(".nav.prev").on("click", ()=>fb.turn("previous"));
+  $(".nav.next").on("click", ()=>fb.turn("next"));
+
+  // Teclado
+  $(document).on("keydown", e=>{
+    if(e.key==="ArrowLeft") fb.turn("previous");
+    if(e.key==="ArrowRight") fb.turn("next");
+  });
+
+  // Click izquierda/derecha
+  fb.on("click", ".page", function(e){
+    const rect = this.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    if(x < rect.width/2) fb.turn("previous");
+    else fb.turn("next");
+  });
+
+  // Mostrar libro
+  fb.css({opacity:1, pointerEvents:"auto"});
+  loading.style.display="none";
+
+});
+
+// Recalcular al redimensionar
+let rt;
+window.addEventListener("resize", ()=>{
+  clearTimeout(rt);
+  rt=setTimeout(()=>location.reload(),300);
+});
+</script>
+
+</body>
+</html>
