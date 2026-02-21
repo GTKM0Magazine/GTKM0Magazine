@@ -3,11 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Global Tour Km0 Magazine</title>
+  <title>Global Tour KmO Magazine</title>
 
   <meta name="description" content="Archivo de revistas · Lectura interactiva + PDF descargable" />
-  <meta property="og:title" content="Global Tour Km0 Magazine" />
-  <meta property="og:description" content="Lectura interactiva + PDF descargable" />
 
   <style>
     /* ====== FUENTES LOCALES ====== */
@@ -39,9 +37,11 @@
       --border: rgba(255,255,255,.10);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.65);
-      --accent:#e10600;
       --shadow: 0 20px 60px rgba(0,0,0,.55);
       --radius: 18px;
+
+      --red:#e10600;
+      --green:#22c55e;
 
       --font-display: "Miracle", serif;
       --font-title: "Big Shoulders", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
@@ -54,7 +54,7 @@
 
     body{
       margin:0;
-      background: radial-gradient(1200px 600px at 50% -10%, rgba(225,6,0,.12), transparent 60%),
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(225,6,0,.10), transparent 60%),
                   radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.06), transparent 60%),
                   var(--bg);
       color:var(--text);
@@ -85,29 +85,32 @@
       flex-direction:column;
       line-height:1.05;
       gap:4px;
+      min-width: 220px;
     }
     .brand .t{
       font-family: var(--font-display);
       font-weight:400;
       letter-spacing:.7px;
       font-size:18px;
+      white-space:nowrap;
     }
     .brand .s{
       font-size:12px;
       color:var(--muted);
       letter-spacing:.2px;
+      white-space:nowrap;
     }
 
     .actions{
       display:flex;
       gap:10px;
       align-items:center;
-      min-width: 240px;
       justify-content:flex-end;
+      flex: 1;
     }
     .input{
-      width: 240px;
-      max-width: 52vw;
+      width: 320px;
+      max-width: 60vw;
       padding:10px 12px;
       border-radius:999px;
       border:1px solid var(--border);
@@ -142,13 +145,15 @@
       position:relative;
       padding:20px;
     }
+
+    /* ✅ Ajuste: más contenido en desktop */
     .hero h1{
       margin:0;
       font-family: var(--font-display);
       font-weight:400;
-      font-size:38px;
+      font-size: clamp(32px, 4vw, 48px);
       letter-spacing:.6px;
-      line-height:1.02;
+      line-height:1.03;
     }
     .hero p{
       margin:10px 0 0;
@@ -183,16 +188,20 @@
       letter-spacing:.9px;
       text-transform: uppercase;
     }
-    .accent-dot{
+    .dot{
       width:8px; height:8px; border-radius:50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(225,6,0,.16);
+      background: rgba(255,255,255,.22);
+    }
+    .dot.green{
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(34,197,94,.14);
     }
 
+    /* ✅ Stats simplificadas (solo 2) */
     .stats{
       display:flex;
       flex-direction:column;
-      justify-content:space-between;
+      justify-content:flex-start;
       gap:12px;
       padding:18px;
     }
@@ -305,6 +314,8 @@
       font-size:12px;
       white-space:nowrap;
     }
+
+    /* ✅ Tags: Disponible verde */
     .tag{
       display:inline-flex;
       align-items:center;
@@ -317,12 +328,16 @@
       font-size:12px;
       width: fit-content;
     }
-    .tag .dot{
+    .tag .mini-dot{
       width:8px;height:8px;border-radius:50%;
       background: rgba(255,255,255,.20);
     }
-    .tag.live .dot{ background: var(--accent); }
-    .tag.soon .dot{ background: rgba(255,255,255,.25); }
+    .tag.live{
+      border-color: rgba(34,197,94,.35);
+      color: rgba(255,255,255,.80);
+    }
+    .tag.live .mini-dot{ background: var(--green); }
+    .tag.soon .mini-dot{ background: rgba(255,255,255,.25); }
 
     .btn-row{
       display:flex;
@@ -342,6 +357,7 @@
       color: var(--text);
       text-decoration:none;
       user-select:none;
+      cursor:pointer;
 
       font-family: var(--font-title);
       font-weight:700;
@@ -350,41 +366,33 @@
       font-size:13px;
     }
     .btn:hover{ background: rgba(255,255,255,.10); }
+
     .btn.primary{
-      border-color: rgba(225,6,0,.55);
-      background: rgba(225,6,0,.18);
+      border-color: rgba(34,197,94,.55);
+      background: rgba(34,197,94,.16);
     }
-    .btn.primary:hover{ background: rgba(225,6,0,.28); }
+    .btn.primary:hover{ background: rgba(34,197,94,.24); }
 
     /* Locked card */
     .locked{
-      opacity: .78;
-      filter: saturate(.75);
+      opacity: .92;
     }
     .locked:hover{
       transform:none;
       background: rgba(255,255,255,.04);
     }
-    .locked .cover img{
-      filter: grayscale(0.20) contrast(.95);
-    }
-    .lock-overlay{
-      position:absolute;
-      inset:0;
-      display:flex;
-      align-items:flex-end;
-      justify-content:space-between;
-      padding:14px;
-      pointer-events:none;
-    }
+
     .badge{
+      position:absolute;
+      left:12px;
+      bottom:12px;
       display:inline-flex;
       align-items:center;
       gap:8px;
       padding:8px 10px;
       border-radius:999px;
       border:1px solid rgba(255,255,255,.14);
-      background: rgba(0,0,0,.35);
+      background: rgba(0,0,0,.38);
       color: rgba(255,255,255,.85);
       font-family: var(--font-title);
       font-weight:700;
@@ -393,9 +401,7 @@
       font-size:12px;
       pointer-events:none;
     }
-    .badge svg{ opacity:.9; }
 
-    /* Footer */
     footer{
       max-width:1100px;
       margin:26px auto 0;
@@ -449,22 +455,17 @@
       text-transform: uppercase;
       font-size:13px;
     }
-    .modal .mbtn.primary{
-      border-color: rgba(225,6,0,.55);
-      background: rgba(225,6,0,.18);
-    }
 
     /* Responsive */
     @media (max-width: 980px){
       .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
       .hero{ grid-template-columns: 1fr; }
-      .actions{ min-width:auto; }
-      .hero h1{ font-size:34px; }
+      .brand{ min-width:auto; }
+      .brand .s{ white-space:normal; }
     }
     @media (max-width: 540px){
       .grid{ grid-template-columns: 1fr; }
-      .hero h1{ font-size:32px; }
-      .input{ width: 52vw; }
+      .input{ width: 55vw; }
     }
   </style>
 </head>
@@ -474,7 +475,7 @@
   <div class="topbar">
     <div class="topbar-inner">
       <div class="brand">
-        <div class="t">Global Tour Km0 Magazine</div>
+        <div class="t">Global Tour KmO Magazine</div>
         <div class="s">Archivo de revistas</div>
       </div>
 
@@ -493,19 +494,15 @@
         </p>
 
         <div class="pill-row">
-          <div class="pill"><span class="accent-dot"></span><b>Disponible</b> para leer</div>
-          <div class="pill"><span class="accent-dot" style="background:rgba(255,255,255,.22); box-shadow:none;"></span><b>Próximamente...</b> (oculto hasta tu orden)</div>
+          <div class="pill"><span class="dot green"></span><b>Disponible</b></div>
+          <div class="pill"><span class="dot"></span><b>Próximamente</b></div>
         </div>
       </div>
 
-      <div class="hero-card stats" id="stats">
+      <div class="hero-card stats">
         <div class="kpi">
           <div class="n" id="kpiLive">0</div>
           <div class="l">Ediciones disponibles</div>
-        </div>
-        <div class="kpi">
-          <div class="n" id="kpiTotal">0</div>
-          <div class="l">Ediciones en archivo</div>
         </div>
         <div class="kpi">
           <div class="n" id="kpiSoon">0</div>
@@ -516,24 +513,23 @@
 
     <div class="section-title">
       <h2>Ediciones</h2>
-      <div class="hint">Tip: para “publicar” una edición, cambia <b>published: true</b></div>
+      <div class="hint"></b></div>
     </div>
 
     <section class="grid" id="grid"></section>
   </main>
 
   <footer>
-    Hecho con amor · Global Tour Km0 Magazine · Proyecto colaborativo
+    Hecho con cariño · Global Tour Km0 Magazine · Proyecto mundial colabortivo
   </footer>
 
-  <!-- Modal Próximamente -->
+  <!-- Modal -->
   <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
     <div class="modal">
       <h3 id="modalTitle">Próximamente</h3>
-      <p id="modalText">Esta edición aún no está disponible.</p>
+      <p id="modalText">Esta edición aún no está publicada.</p>
       <div class="mrow">
         <button class="mbtn" id="modalClose">Cerrar</button>
-        <button class="mbtn primary" id="modalOk">Entendido</button>
       </div>
     </div>
   </div>
@@ -550,50 +546,48 @@
         published: true,
         cover: "/GTKM0Magazine/revistas/chile/paginas/001.jpg"
       },
+
+      // Próximamente (NO se muestra su portada real)
       {
         country: "Colombia",
         slug: "colombia",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/colombia/paginas/001.png"
+        dateLabel: "Disponible el 14 marzo 2026",
+        published: false
       },
       {
         country: "Ecuador",
         slug: "ecuador",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/ecuador/paginas/001.png"
+        dateLabel: "Disponible el 19 marzo 2026",
+        published: false
       },
-       {
+      {
         country: "Perú",
         slug: "peru",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/peru/paginas/001.png"
+        dateLabel: "Disponible el 24 marzo 2026",
+        published: false
       },
       {
         country: "Brasil",
         slug: "brasil",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/brasil/paginas/001.png"
+        dateLabel: "Disponible el 27 marzo 2026",
+        published: false
       },
-       {
+      {
         country: "Portugal",
         slug: "portugal",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/portugal/paginas/001.png"
+        dateLabel: "Disponible el 25 abril 2026",
+        published: false
       },
-       {
+      {
         country: "España",
         slug: "espana",
-        dateLabel: "Próximamente",
-        published: false,
-        cover: "/GTKM0Magazine/revistas/espana/paginas/001.png"
-      }
+        dateLabel: "Disponible el 02 mayo 2026",
+        published: false
+      },
     ];
     // =========================
+
+    const LOCKED_COVER = "/GTKM0Magazine/assets/cover-locked.png";
 
     const grid = document.getElementById("grid");
     const search = document.getElementById("search");
@@ -602,7 +596,6 @@
     const modalTitle = document.getElementById("modalTitle");
     const modalText = document.getElementById("modalText");
     const modalClose = document.getElementById("modalClose");
-    const modalOk = document.getElementById("modalOk");
 
     function openModal(title, text){
       modalTitle.textContent = title;
@@ -613,16 +606,7 @@
       modalBackdrop.style.display = "none";
     }
     modalClose.addEventListener("click", closeModal);
-    modalOk.addEventListener("click", closeModal);
     modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
-
-    function iconLock(){
-      return `
-        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-          <path d="M7 11V8a5 5 0 0110 0v3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
-          <rect x="6" y="11" width="12" height="10" rx="2" stroke="white" stroke-width="2" fill="none"/>
-        </svg>`;
-    }
 
     function render(list){
       grid.innerHTML = "";
@@ -631,7 +615,6 @@
       const soon = list.filter(e => !e.published).length;
       document.getElementById("kpiLive").textContent = live;
       document.getElementById("kpiSoon").textContent = soon;
-      document.getElementById("kpiTotal").textContent = list.length;
 
       const ordered = [...list].sort((a,b)=>{
         return (b.published - a.published) || a.country.localeCompare(b.country);
@@ -641,51 +624,58 @@
         const href = `/GTKM0Magazine/revistas/${ed.slug}/`;
         const isLocked = !ed.published;
 
+        // ✅ Si está bloqueada, SIEMPRE cover genérica
+        const coverSrc = isLocked ? LOCKED_COVER : ed.cover;
+
         const card = document.createElement("article");
         card.className = "card" + (isLocked ? " locked" : "");
         card.innerHTML = `
           <a class="cover" href="${isLocked ? "#" : href}" aria-label="${ed.country}">
-            <img src="${ed.cover}" alt="Portada ${ed.country}" loading="lazy">
+            <img src="${coverSrc}" alt="${isLocked ? "Edición próximamente" : ("Portada " + ed.country)}" loading="lazy">
             <div class="fade"></div>
-            ${isLocked ? `
-              <div class="lock-overlay">
-                <div class="badge">${iconLock()} Próximamente</div>
-              </div>` : ``}
+            ${isLocked ? `<div class="badge">Próximamente</div>` : ``}
           </a>
 
           <div class="meta">
             <div class="row">
               <div class="country">${ed.country}</div>
-              <div class="date">${ed.dateLabel}</div>
+              <div class="date">${ed.dateLabel || ""}</div>
             </div>
 
             <div class="tag ${ed.published ? "live" : "soon"}">
-              <span class="dot"></span>
+              <span class="mini-dot"></span>
               ${ed.published ? "Disponible" : "Próximamente"}
             </div>
 
             <div class="btn-row">
-              ${ed.published ? `
-                <a class="btn primary" href="${href}">Leer</a>
-                <button class="btn" type="button" data-copy="${href}">Copiar enlace</button>
-              ` : `
-                <button class="btn primary" type="button" data-soon="${ed.country}">Aviso</button>
-                <button class="btn" type="button" data-soon="${ed.country}">Detalles</button>
-              `}
+              ${
+                ed.published
+                ? `
+                  <a class="btn primary" href="${href}">Leer</a>
+                  <button class="btn" type="button" data-copy="${href}">Copiar enlace</button>
+                `
+                : `
+                  <button class="btn" type="button" data-soon="${ed.country}">Ver info</button>
+                `
+              }
             </div>
           </div>
         `;
 
         if(isLocked){
+          const info = ed.dateLabel
+            ? `Esta edición está preparada, pero aún no está publicada.\n\n${ed.dateLabel}`
+            : `Esta edición está preparada, pero aún no está publicada.`;
+
           card.querySelector(".cover").addEventListener("click", (ev)=>{
             ev.preventDefault();
-            openModal(`${ed.country} · Próximamente`, "Esta edición ya está preparada, pero aún no está publicada.");
+            openModal(`${ed.country} · Próximamente`, info);
           });
-          card.querySelectorAll("[data-soon]").forEach(btn=>{
-            btn.addEventListener("click", ()=>{
-              openModal(`${ed.country} · Próximamente`, "En cuanto la actives, aparecerá el botón de lectura y el acceso público.");
-            });
+
+          card.querySelector("[data-soon]").addEventListener("click", ()=>{
+            openModal(`${ed.country} · Próximamente`, info);
           });
+
         }else{
           card.querySelector("[data-copy]").addEventListener("click", async ()=>{
             const hrefPath = card.querySelector("[data-copy]").getAttribute("data-copy");
@@ -694,7 +684,7 @@
               await navigator.clipboard.writeText(full);
               openModal("Enlace copiado", "Ya puedes pegarlo donde quieras ✨");
             }catch(e){
-              openModal("No se pudo copiar", "Tu navegador no permite copiar automáticamente. Copia manual: " + full);
+              openModal("No se pudo copiar", "Copia manual: " + full);
             }
           });
         }
