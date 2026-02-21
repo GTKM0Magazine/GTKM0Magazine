@@ -616,9 +616,7 @@
       document.getElementById("kpiLive").textContent = live;
       document.getElementById("kpiSoon").textContent = soon;
 
-      const ordered = [...list].sort((a,b)=>{
-        return (b.published - a.published) || a.country.localeCompare(b.country);
-      });
+      const ordered = [...list]; 
 
       for(const ed of ordered){
         const href = `/GTKM0Magazine/revistas/${ed.slug}/`;
