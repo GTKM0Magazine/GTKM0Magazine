@@ -583,7 +583,7 @@
         slug: "espana",
         dateLabel: "Disponible el 02 mayo 2026",
         published: false
-      },
+      }
     ];
     // =========================
 
@@ -664,8 +664,8 @@
 
         if(isLocked){
           const info = ed.dateLabel
-            ? `Esta edición está preparada, pero aún no está publicada.\n\n${ed.dateLabel}`
-            : `Esta edición está preparada, pero aún no está publicada.`;
+            ? `¡Prepárate para descubrir pronto esta edición!\n\n${ed.dateLabel}`
+            : `¡Prepárate para descubrir pronto esta edición!.`;
 
           card.querySelector(".cover").addEventListener("click", (ev)=>{
             ev.preventDefault();
