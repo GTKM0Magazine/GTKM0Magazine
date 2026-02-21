@@ -1,102 +1,717 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Global Tour KM0 Magazine</title>
-    <link rel="stylesheet" href="assets/style.css">
-    <style>
-        /* Estilos específicos para la portada */
-        header {
-            background-color: var(--rojo-alboran);
-            padding: 80px 20px;
-            text-align: center;
-            color: var(--blanco);
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Global Tour Km0 Magazine</title>
 
-        .logo-tour {
-            font-family: 'Miracle', serif; /* Tu fuente personalizada */
-            font-size: 5rem;
-            margin: 0;
-            line-height: 1;
-        }
+  <meta name="description" content="Archivo de revistas · Lectura interactiva + PDF descargable" />
+  <meta property="og:title" content="Global Tour Km0 Magazine" />
+  <meta property="og:description" content="Lectura interactiva + PDF descargable" />
 
-        .archivo-subtitle {
-            font-family: 'BigShoulders', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            margin-top: 10px;
-        }
+  <style>
+    /* ====== FUENTES LOCALES ====== */
+    @font-face{
+      font-family: "Miracle";
+      src: url("/GTKM0Magazine/assets/miracle.woff") format("woff");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face{
+      font-family: "Big Shoulders";
+      src: url("/GTKM0Magazine/assets/big-shoulders-regular.woff") format("woff");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face{
+      font-family: "Big Shoulders";
+      src: url("/GTKM0Magazine/assets/big-shoulders-bold.woff") format("woff");
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
 
-.grid-ediciones {
-    display: grid;
-    /* Cambiamos el minmax de 300px a 200px para permitir más columnas */
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); 
-    gap: 30px;
-    padding: 40px 5%;
-    background-color: var(--negro);
-}
+    :root{
+      --bg:#0f0f10;
+      --panel: rgba(18,18,20,.78);
+      --border: rgba(255,255,255,.10);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.65);
+      --accent:#e10600;
+      --shadow: 0 20px 60px rgba(0,0,0,.55);
+      --radius: 18px;
 
-        .card-pais {
-            text-decoration: none;
-            transition: transform 0.3s ease;
-        }
+      --font-display: "Miracle", serif;
+      --font-title: "Big Shoulders", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      --font-body: "Helvetica Now Condensed", "HelveticaNeue-Condensed", "Helvetica Neue",
+                   "Arial Narrow", Arial, "Roboto Condensed", system-ui, sans-serif;
+    }
 
-        .card-pais:hover {
-            transform: scale(1.05);
-        }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
 
-        .portada-preview {
-            width: 100%;
-            aspect-ratio: 3/4;
-            background-size: cover;
-            background-position: center;
-            border: 1px solid #333;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 50% -10%, rgba(225,6,0,.12), transparent 60%),
+                  radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.06), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family: var(--font-body);
+    }
 
-        .info-pais {
-            margin-top: 15px;
-            text-align: left;
-        }
+    /* Topbar */
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      line-height:1.05;
+      gap:4px;
+    }
+    .brand .t{
+      font-family: var(--font-display);
+      font-weight:400;
+      letter-spacing:.7px;
+      font-size:18px;
+    }
+    .brand .s{
+      font-size:12px;
+      color:var(--muted);
+      letter-spacing:.2px;
+    }
 
-        .nombre-pais {
-            font-family: 'BigShoulders', sans-serif;
-            font-weight: bold;
-            font-size: 2rem;
-            color: var(--blanco);
-            text-transform: uppercase;
-        }
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      min-width: 240px;
+      justify-content:flex-end;
+    }
+    .input{
+      width: 240px;
+      max-width: 52vw;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      outline:none;
+      font-size:13px;
+      font-family: var(--font-body);
+    }
+    .input::placeholder{ color: rgba(255,255,255,.45); }
 
-        .fecha-tour {
-            color: var(--rojo-alboran);
-            font-family: 'BigShoulders', sans-serif;
-            letter-spacing: 2px;
-        }
-    </style>
+    /* Layout */
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:26px 16px 60px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap:18px;
+      align-items:stretch;
+      margin-bottom:22px;
+    }
+    .hero-card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+      padding:20px;
+    }
+    .hero h1{
+      margin:0;
+      font-family: var(--font-display);
+      font-weight:400;
+      font-size:38px;
+      letter-spacing:.6px;
+      line-height:1.02;
+    }
+    .hero p{
+      margin:10px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width: 60ch;
+    }
+
+    .pill-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.22);
+      color: var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .pill b{
+      color:var(--text);
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:.9px;
+      text-transform: uppercase;
+    }
+    .accent-dot{
+      width:8px; height:8px; border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(225,6,0,.16);
+    }
+
+    .stats{
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      gap:12px;
+      padding:18px;
+    }
+    .kpi{
+      border:1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(0,0,0,.18);
+      padding:14px;
+    }
+    .kpi .n{
+      font-family: var(--font-title);
+      font-weight:700;
+      font-size:26px;
+      letter-spacing:1px;
+      text-transform: uppercase;
+    }
+    .kpi .l{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* Grid */
+    .section-title{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:12px;
+      margin:22px 0 12px;
+    }
+    .section-title h2{
+      margin:0;
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+      font-size:16px;
+    }
+    .section-title .hint{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap:16px;
+    }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.04);
+      overflow:hidden;
+      position:relative;
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+      transition: transform .18s ease, border-color .18s ease, background .18s ease;
+    }
+    .card:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,.16);
+      background: rgba(255,255,255,.055);
+    }
+
+    .cover{
+      aspect-ratio: 3 / 4;
+      width:100%;
+      background: #111;
+      display:block;
+      position:relative;
+      overflow:hidden;
+      text-decoration:none;
+    }
+    .cover img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.02);
+    }
+    .fade{
+      position:absolute;
+      inset:auto 0 0 0;
+      height: 40%;
+      background: linear-gradient(to top, rgba(0,0,0,.85), transparent);
+      pointer-events:none;
+    }
+
+    .meta{
+      padding:14px 14px 16px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .country{
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+      font-size:16px;
+    }
+    .date{
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color:var(--muted);
+      font-size:12px;
+      width: fit-content;
+    }
+    .tag .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: rgba(255,255,255,.20);
+    }
+    .tag.live .dot{ background: var(--accent); }
+    .tag.soon .dot{ background: rgba(255,255,255,.25); }
+
+    .btn-row{
+      display:flex;
+      gap:10px;
+      margin-top:6px;
+    }
+    .btn{
+      flex:1;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      text-decoration:none;
+      user-select:none;
+
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+      font-size:13px;
+    }
+    .btn:hover{ background: rgba(255,255,255,.10); }
+    .btn.primary{
+      border-color: rgba(225,6,0,.55);
+      background: rgba(225,6,0,.18);
+    }
+    .btn.primary:hover{ background: rgba(225,6,0,.28); }
+
+    /* Locked card */
+    .locked{
+      opacity: .78;
+      filter: saturate(.75);
+    }
+    .locked:hover{
+      transform:none;
+      background: rgba(255,255,255,.04);
+    }
+    .locked .cover img{
+      filter: grayscale(0.20) contrast(.95);
+    }
+    .lock-overlay{
+      position:absolute;
+      inset:0;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      padding:14px;
+      pointer-events:none;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.35);
+      color: rgba(255,255,255,.85);
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+      font-size:12px;
+      pointer-events:none;
+    }
+    .badge svg{ opacity:.9; }
+
+    /* Footer */
+    footer{
+      max-width:1100px;
+      margin:26px auto 0;
+      padding:0 16px 24px;
+      color:rgba(255,255,255,.45);
+      font-size:12px;
+      text-align:center;
+    }
+
+    /* Modal */
+    .modal-backdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.60);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:100;
+    }
+    .modal{
+      max-width: 520px;
+      width:100%;
+      border:1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(18,18,20,.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      padding:16px;
+    }
+    .modal h3{
+      margin:0 0 6px;
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+    }
+    .modal p{ margin:0 0 12px; color:var(--muted); line-height:1.4; }
+    .modal .mrow{ display:flex; gap:10px; justify-content:flex-end; }
+    .modal .mbtn{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-family: var(--font-title);
+      font-weight:700;
+      letter-spacing:1px;
+      text-transform: uppercase;
+      font-size:13px;
+    }
+    .modal .mbtn.primary{
+      border-color: rgba(225,6,0,.55);
+      background: rgba(225,6,0,.18);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .hero{ grid-template-columns: 1fr; }
+      .actions{ min-width:auto; }
+      .hero h1{ font-size:34px; }
+    }
+    @media (max-width: 540px){
+      .grid{ grid-template-columns: 1fr; }
+      .hero h1{ font-size:32px; }
+      .input{ width: 52vw; }
+    }
+  </style>
 </head>
+
 <body>
 
-    <header>
-        <h1 class="logo-tour">Global Tour KmO</h1>
-        <div class="archivo-subtitle">ARCHIVO DE REVISTAS</div>
-    </header>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="t">Global Tour Km0 Magazine</div>
+        <div class="s">Archivo de revistas</div>
+      </div>
 
-    <main class="grid-ediciones">
-        
-        <a href="revistas/chile/index.html" class="card-pais">
-            <div class="portada-preview" style="background-image: url('revistas/chile/paginas/001.png');"></div>
-            <div class="info-pais">
-                <div class="nombre-pais">Chile</div>
-                <div class="fecha-tour">28 FEBRERO 2026</div>
+      <div class="actions">
+        <input id="search" class="input" placeholder="Buscar edición…" />
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="hero">
+      <div class="hero-card">
+        <h1>Archivo de revistas</h1>
+        <p>
+          Cada edición incluye lectura interactiva y la opción de descargar el PDF como recuerdo.
+        </p>
+
+        <div class="pill-row">
+          <div class="pill"><span class="accent-dot"></span><b>Disponible</b> para leer</div>
+          <div class="pill"><span class="accent-dot" style="background:rgba(255,255,255,.22); box-shadow:none;"></span><b>Próximamente...</b> (oculto hasta tu orden)</div>
+        </div>
+      </div>
+
+      <div class="hero-card stats" id="stats">
+        <div class="kpi">
+          <div class="n" id="kpiLive">0</div>
+          <div class="l">Ediciones disponibles</div>
+        </div>
+        <div class="kpi">
+          <div class="n" id="kpiTotal">0</div>
+          <div class="l">Ediciones en archivo</div>
+        </div>
+        <div class="kpi">
+          <div class="n" id="kpiSoon">0</div>
+          <div class="l">Próximamente</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-title">
+      <h2>Ediciones</h2>
+      <div class="hint">Tip: para “publicar” una edición, cambia <b>published: true</b></div>
+    </div>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <footer>
+    Hecho con amor · Global Tour Km0 Magazine · Proyecto colaborativo
+  </footer>
+
+  <!-- Modal Próximamente -->
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true">
+    <div class="modal">
+      <h3 id="modalTitle">Próximamente</h3>
+      <p id="modalText">Esta edición aún no está disponible.</p>
+      <div class="mrow">
+        <button class="mbtn" id="modalClose">Cerrar</button>
+        <button class="mbtn primary" id="modalOk">Entendido</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // EDITA SOLO ESTA LISTA 👇
+    // =========================
+    const EDITIONS = [
+      {
+        country: "Chile",
+        slug: "chile",
+        dateLabel: "28 febrero 2026",
+        published: true,
+        cover: "/GTKM0Magazine/revistas/chile/paginas/001.jpg"
+      },
+      {
+        country: "Colombia",
+        slug: "colombia",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/colombia/paginas/001.png"
+      },
+      {
+        country: "Ecuador",
+        slug: "ecuador",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/ecuador/paginas/001.png"
+      },
+       {
+        country: "Perú",
+        slug: "peru",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/peru/paginas/001.png"
+      },
+      {
+        country: "Brasil",
+        slug: "brasil",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/brasil/paginas/001.png"
+      },
+       {
+        country: "Portugal",
+        slug: "portugal",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/portugal/paginas/001.png"
+      },
+       {
+        country: "España",
+        slug: "espana",
+        dateLabel: "Próximamente",
+        published: false,
+        cover: "/GTKM0Magazine/revistas/espana/paginas/001.png"
+      }
+    ];
+    // =========================
+
+    const grid = document.getElementById("grid");
+    const search = document.getElementById("search");
+
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const modalClose = document.getElementById("modalClose");
+    const modalOk = document.getElementById("modalOk");
+
+    function openModal(title, text){
+      modalTitle.textContent = title;
+      modalText.textContent = text;
+      modalBackdrop.style.display = "flex";
+    }
+    function closeModal(){
+      modalBackdrop.style.display = "none";
+    }
+    modalClose.addEventListener("click", closeModal);
+    modalOk.addEventListener("click", closeModal);
+    modalBackdrop.addEventListener("click", (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+
+    function iconLock(){
+      return `
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M7 11V8a5 5 0 0110 0v3" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <rect x="6" y="11" width="12" height="10" rx="2" stroke="white" stroke-width="2" fill="none"/>
+        </svg>`;
+    }
+
+    function render(list){
+      grid.innerHTML = "";
+
+      const live = list.filter(e => e.published).length;
+      const soon = list.filter(e => !e.published).length;
+      document.getElementById("kpiLive").textContent = live;
+      document.getElementById("kpiSoon").textContent = soon;
+      document.getElementById("kpiTotal").textContent = list.length;
+
+      const ordered = [...list].sort((a,b)=>{
+        return (b.published - a.published) || a.country.localeCompare(b.country);
+      });
+
+      for(const ed of ordered){
+        const href = `/GTKM0Magazine/revistas/${ed.slug}/`;
+        const isLocked = !ed.published;
+
+        const card = document.createElement("article");
+        card.className = "card" + (isLocked ? " locked" : "");
+        card.innerHTML = `
+          <a class="cover" href="${isLocked ? "#" : href}" aria-label="${ed.country}">
+            <img src="${ed.cover}" alt="Portada ${ed.country}" loading="lazy">
+            <div class="fade"></div>
+            ${isLocked ? `
+              <div class="lock-overlay">
+                <div class="badge">${iconLock()} Próximamente</div>
+              </div>` : ``}
+          </a>
+
+          <div class="meta">
+            <div class="row">
+              <div class="country">${ed.country}</div>
+              <div class="date">${ed.dateLabel}</div>
             </div>
-        </a>
 
-        </main>
+            <div class="tag ${ed.published ? "live" : "soon"}">
+              <span class="dot"></span>
+              ${ed.published ? "Disponible" : "Próximamente"}
+            </div>
 
-    <footer style="color: #666; text-align: center; padding: 40px; font-size: 0.8rem; background: #111;">
-        <p>Un proyecto colaborativo de fans para fans.</p>
-    </footer>
+            <div class="btn-row">
+              ${ed.published ? `
+                <a class="btn primary" href="${href}">Leer</a>
+                <button class="btn" type="button" data-copy="${href}">Copiar enlace</button>
+              ` : `
+                <button class="btn primary" type="button" data-soon="${ed.country}">Aviso</button>
+                <button class="btn" type="button" data-soon="${ed.country}">Detalles</button>
+              `}
+            </div>
+          </div>
+        `;
+
+        if(isLocked){
+          card.querySelector(".cover").addEventListener("click", (ev)=>{
+            ev.preventDefault();
+            openModal(`${ed.country} · Próximamente`, "Esta edición ya está preparada, pero aún no está publicada.");
+          });
+          card.querySelectorAll("[data-soon]").forEach(btn=>{
+            btn.addEventListener("click", ()=>{
+              openModal(`${ed.country} · Próximamente`, "En cuanto la actives, aparecerá el botón de lectura y el acceso público.");
+            });
+          });
+        }else{
+          card.querySelector("[data-copy]").addEventListener("click", async ()=>{
+            const hrefPath = card.querySelector("[data-copy]").getAttribute("data-copy");
+            const full = location.origin + hrefPath;
+            try{
+              await navigator.clipboard.writeText(full);
+              openModal("Enlace copiado", "Ya puedes pegarlo donde quieras ✨");
+            }catch(e){
+              openModal("No se pudo copiar", "Tu navegador no permite copiar automáticamente. Copia manual: " + full);
+            }
+          });
+        }
+
+        grid.appendChild(card);
+      }
+    }
+
+    function filter(){
+      const q = (search.value || "").trim().toLowerCase();
+      if(!q) return render(EDITIONS);
+      render(EDITIONS.filter(e => e.country.toLowerCase().includes(q)));
+    }
+
+    search.addEventListener("input", filter);
+    render(EDITIONS);
+  </script>
 
 </body>
 </html>
