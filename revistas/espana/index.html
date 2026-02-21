@@ -6,246 +6,360 @@
 <title>Revista España | GTKM0</title>
 
 <style>
-body{
-  background:#1a1a1a;
-  margin:0;
-  overflow:hidden;
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-family:Arial, sans-serif;
-}
-
-.magazine-viewport{
-  width:100vw;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-}
-
-/* Libro */
-#flipbook{
-  width:1000px;
-  height:707px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .25s ease-in;
-}
-
-@media (max-width: 900px){
-  #flipbook{
-    width:90vw;
-    height:calc(90vw * 1.414);
+  :root{
+    --bg:#101010;
+    --panel: rgba(18,18,18,.72);
+    --border: rgba(255,255,255,.14);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.65);
+    --accent:#e60000;
   }
-}
 
-.page{
-  width:500px;
-  height:707px;
-  background:#fff center/contain no-repeat;
-  box-shadow:0 0 20px rgba(0,0,0,.5);
-}
+  body{
+    background:var(--bg);
+    margin:0;
+    overflow:hidden;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Arial, sans-serif;
+    color:var(--text);
+  }
 
-/* Botón descarga */
-.btn-download{
-  position:absolute;
-  top:20px;
-  left:20px;
-  background:#e60000;
-  color:#fff;
-  padding:10px 15px;
-  text-decoration:none;
-  border-radius:6px;
-  font-size:12px;
-  font-weight:bold;
-  z-index:9999;
-}
+  .magazine-viewport{
+    width:100vw;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    position:relative;
+    padding-top:64px; /* deja sitio para la barra */
+    box-sizing:border-box;
+  }
 
-/* Loader */
-#loading{
-  position:absolute;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  color:rgba(255,255,255,.75);
-  font-size:14px;
-  pointer-events:none;
-}
+  /* TOP BAR */
+  .topbar{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:56px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    background:var(--panel);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+    z-index:9999;
+  }
 
-/* Flechas navegación */
-.nav{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:50px;
-  height:50px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.3);
-  background:rgba(0,0,0,.4);
-  color:#fff;
-  font-size:30px;
-  cursor:pointer;
-  z-index:9998;
-  user-select:none;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+  .brand{
+    display:flex;
+    flex-direction:column;
+    line-height:1.05;
+    gap:2px;
+    margin-right:10px;
+  }
+  .brand .t{
+    font-weight:700;
+    letter-spacing:.2px;
+    font-size:13px;
+  }
+  .brand .s{
+    font-size:11px;
+    color:var(--muted);
+  }
 
-.nav.prev{ left:15px; }
-.nav.next{ right:15px; }
+  .actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+  }
 
-.nav:hover{
-  background:rgba(0,0,0,.7);
-}
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:9px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background:rgba(0,0,0,.15);
+    color:var(--text);
+    text-decoration:none;
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:.2px;
+    user-select:none;
+  }
+  .btn:hover{ background:rgba(255,255,255,.06); }
+  .btn.primary{
+    border-color: rgba(230,0,0,.55);
+    background: rgba(230,0,0,.18);
+  }
+  .btn.primary:hover{
+    background: rgba(230,0,0,.28);
+  }
+
+  .toast{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:18px;
+    background:rgba(0,0,0,.65);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease;
+    z-index:9999;
+  }
+  .toast.show{ opacity:1; }
+
+  /* Libro */
+  #flipbook{
+    width:1000px;
+    height:707px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease-in;
+  }
+
+  @media (max-width: 900px){
+    .magazine-viewport{ padding-top:60px; }
+    #flipbook{
+      width:90vw;
+      height:calc(90vw * 1.414);
+    }
+    .brand .s{ display:none; }
+    .btn{ padding:9px 10px; }
+    .btn span.label{ display:none; } /* deja solo icono + palabra corta si quieres */
+  }
+
+  .page{
+    width:500px;
+    height:707px;
+    background:#fff center/contain no-repeat;
+    box-shadow:0 0 20px rgba(0,0,0,.5);
+  }
+
+  #loading{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:rgba(255,255,255,.7);
+    font-size:14px;
+    pointer-events:none;
+  }
+
+  /* Flechas navegación */
+  .nav{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    background:rgba(0,0,0,.35);
+    color:#fff;
+    font-size:30px;
+    cursor:pointer;
+    z-index:50;
+    user-select:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .nav.prev{ left:14px; }
+  .nav.next{ right:14px; }
+  .nav:hover{ background:rgba(0,0,0,.6); }
 </style>
 </head>
 
 <body>
 
-<div class="magazine-viewport">
+<!-- TOP BAR -->
+<header class="topbar">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div class="brand">
+      <div class="t">Global Tour Km0</div>
+      <div class="s">Revista · España</div>
+    </div>
 
-  <a href="revista_espana.pdf" class="btn-download" download>DESCARGAR PDF</a>
+    <a class="btn" href="/GTKM0Magazine/" aria-label="Volver al archivo">
+      ← <span class="label">Archivo</span>
+    </a>
+  </div>
+
+  <div class="actions">
+    <a class="btn primary" href="revista_espana.pdf" download aria-label="Descargar PDF">
+      ⤓ <span class="label">PDF</span>
+    </a>
+    <button class="btn" id="btnShare" type="button" aria-label="Compartir enlace">
+      ⧉ <span class="label">Compartir</span>
+    </button>
+  </div>
+</header>
+
+<div class="magazine-viewport">
   <audio id="audioFlip" preload="auto" src="/GTKM0Magazine/assets/page-flip.mp3"></audio>
 
   <div id="flipbook"></div>
   <div id="loading">Cargando revista…</div>
 
-  <div class="nav prev">‹</div>
-  <div class="nav next">›</div>
-
+  <div class="nav prev" aria-label="Anterior">‹</div>
+  <div class="nav next" aria-label="Siguiente">›</div>
 </div>
 
-<!-- jQuery (puede seguir por CDN) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<div class="toast" id="toast">Enlace copiado ✨</div>
 
-<!-- turn.js LOCAL (este ya lo tienes en /assets/) -->
+<!-- Librerías -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/GTKM0Magazine/assets/turn.min.js"></script>
 
 <script>
-function preload(urls){
-  return Promise.all(urls.map(u => new Promise(res=>{
-    const img = new Image();
-    img.onload = ()=>res(true);
-    img.onerror = ()=>res(false);
-    img.src = u;
-  })));
-}
-
-function getDims(){
-  const esMovil = window.innerWidth < 900;
-  const pageW = esMovil ? Math.floor(window.innerWidth * 0.9) : 500;
-  const pageH = Math.floor(pageW * 1.414);
-  return {
-    esMovil,
-    pageW,
-    pageH,
-    width: esMovil ? pageW : pageW * 2,
-    height: pageH,
-    display: esMovil ? "single" : "double"
-  };
-}
-
-$(async function(){
-
-  const fb = $("#flipbook");
-  const audio = document.getElementById("audioFlip");
-  const loading = document.getElementById("loading");
-
-  if(!(jQuery.fn && typeof jQuery.fn.turn === "function")){
-    loading.textContent = "turn.js no cargó (revisa /assets/turn.min.js)";
-    return;
+  function preload(urls){
+    return Promise.all(urls.map(u => new Promise(res=>{
+      const img = new Image();
+      img.onload = ()=>res(true);
+      img.onerror = ()=>res(false);
+      img.src = u;
+    })));
   }
 
-  const totalPaginas = 30;
-  const PAGE_BASE = "/GTKM0Magazine/revistas/espana/paginas/";
-
-  // Crear páginas
-  for(let i=1;i<=totalPaginas;i++){
-    const num = String(i).padStart(3,"0");
-    fb.append(`<div class="page" style="background-image:url('${PAGE_BASE}${num}.png')"></div>`);
+  function getDims(){
+    const esMovil = window.innerWidth < 900;
+    const pageW = esMovil ? Math.floor(window.innerWidth * 0.9) : 500;
+    const pageH = Math.floor(pageW * 1.414);
+    return {
+      esMovil,
+      pageW,
+      pageH,
+      width: esMovil ? pageW : pageW * 2,
+      height: pageH,
+      display: esMovil ? "single" : "double"
+    };
   }
 
-  // Precargar primeras
-  const primeras = [1,2,3,4,5,6].map(n =>
-    PAGE_BASE + String(n).padStart(3,"0") + ".png"
-  );
-
-  const ok = await preload(primeras);
-
-  if(ok.every(v=>!v)){
-    loading.textContent = "No se cargan las páginas.";
-    return;
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1400);
   }
 
-  const d = getDims();
+  $(async function(){
+    const fb = $("#flipbook");
+    const audio = document.getElementById("audioFlip");
+    const loading = document.getElementById("loading");
 
-  $(".page").css({
-    width: d.pageW + "px",
-    height: d.pageH + "px"
+    if(!(jQuery.fn && typeof jQuery.fn.turn === "function")){
+      loading.textContent = "turn.js no cargó (revisa /assets/turn.min.js)";
+      return;
+    }
+
+    const totalPaginas = 30;
+    const PAGE_BASE = "/GTKM0Magazine/revistas/chile/paginas/";
+
+    // Crear páginas
+    for(let i=1;i<=totalPaginas;i++){
+      const num = String(i).padStart(3,"0");
+      fb.append(`<div class="page" style="background-image:url('${PAGE_BASE}${num}.png')"></div>`);
+    }
+
+    // Precargar primeras páginas
+    const primeras = [1,2,3,4,5,6].filter(n=>n<=totalPaginas)
+      .map(n => PAGE_BASE + String(n).padStart(3,"0") + ".png");
+
+    const ok = await preload(primeras);
+    if(ok.every(v=>!v)){
+      loading.textContent = "No se cargan las páginas.";
+      return;
+    }
+
+    const d = getDims();
+    $(".page").css({ width: d.pageW+"px", height: d.pageH+"px" });
+    fb.css({ width: d.width+"px", height: d.height+"px" });
+
+    // Flag para evitar audio al iniciar
+    let readyForSound = false;
+
+    fb.turn({
+      width: d.width,
+      height: d.height,
+      display: d.display,
+      autoCenter:true,
+      acceleration:true,
+      gradients:true,
+      elevation:50,
+      when:{
+        turned:function(event, page){
+          // Evita sonido en el montaje inicial
+          if(readyForSound && page > 1 && audio){
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play().catch(()=>{});
+          }
+          // Después del primer "turned", ya permitimos sonido
+          readyForSound = true;
+        }
+      }
+    });
+
+    // Botones nav
+    $(".nav.prev").on("click", ()=>fb.turn("previous"));
+    $(".nav.next").on("click", ()=>fb.turn("next"));
+
+    // Teclado
+    $(document).on("keydown", e=>{
+      if(e.key==="ArrowLeft") fb.turn("previous");
+      if(e.key==="ArrowRight") fb.turn("next");
+    });
+
+    // Click izquierda/derecha
+    fb.on("click", ".page", function(e){
+      const rect = this.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      if(x < rect.width/2) fb.turn("previous");
+      else fb.turn("next");
+    });
+
+    fb.css({opacity:1, pointerEvents:"auto"});
+    loading.style.display="none";
   });
 
-  fb.css({
-    width: d.width + "px",
-    height: d.height + "px"
-  });
-
-  fb.turn({
-    width: d.width,
-    height: d.height,
-    display: d.display,
-    autoCenter:true,
-    acceleration:true,
-    gradients:true,
-    elevation:50,
-    when:{
-  turned:function(event, page){
-    if(page > 1){  // evita que suene al cargar
-      if(audio){
-        audio.pause();
-        audio.currentTime = 0;
-        audio.play().catch(()=>{});
+  // Compartir (copia enlace)
+  document.getElementById("btnShare").addEventListener("click", async ()=>{
+    const url = window.location.href;
+    try{
+      if(navigator.share){
+        await navigator.share({ title: document.title, url });
+      }else{
+        await navigator.clipboard.writeText(url);
+        showToast("Enlace copiado ✨");
+      }
+    }catch(e){
+      try{
+        await navigator.clipboard.writeText(url);
+        showToast("Enlace copiado ✨");
+      }catch(_){
+        showToast("No se pudo copiar 😅");
       }
     }
-  }
-}
-
   });
 
-  // Botones
-  $(".nav.prev").on("click", ()=>fb.turn("previous"));
-  $(".nav.next").on("click", ()=>fb.turn("next"));
-
-  // Teclado
-  $(document).on("keydown", e=>{
-    if(e.key==="ArrowLeft") fb.turn("previous");
-    if(e.key==="ArrowRight") fb.turn("next");
+  // Recalcular al redimensionar
+  let rt;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(rt);
+    rt=setTimeout(()=>location.reload(),300);
   });
-
-  // Click izquierda/derecha
-  fb.on("click", ".page", function(e){
-    const rect = this.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    if(x < rect.width/2) fb.turn("previous");
-    else fb.turn("next");
-  });
-
-  // Mostrar libro
-  fb.css({opacity:1, pointerEvents:"auto"});
-  loading.style.display="none";
-
-});
-
-// Recalcular al redimensionar
-let rt;
-window.addEventListener("resize", ()=>{
-  clearTimeout(rt);
-  rt=setTimeout(()=>location.reload(),300);
-});
 </script>
 
 </body>
