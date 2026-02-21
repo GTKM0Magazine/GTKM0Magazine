@@ -326,13 +326,14 @@
 
 <script>
   // ====== CONFIG CHILE ======
-  const CFG = {
-    pais: "Chile",
-    slug: "chile",
-    totalPaginas: 36,
-    pdf: "revista_chile.pdf",
-    ext: "jpg" // <-- IMPORTANTÍSIMO: JPG
-  };
+const CFG = {
+  pais: "Chile",
+  slug: "chile",
+  numero: "nº. 1",
+  totalPaginas: 36,
+  pdf: "revista_chile.pdf",
+  ext: "jpg"
+};
 
   function preload(urls){
     return Promise.all(urls.map(u => new Promise(res=>{
@@ -365,8 +366,8 @@
   }
 
   // Rellena textos por config (por si duplicas)
-  document.title = `Revista ${CFG.pais} | GTKM0`;
-  document.querySelector(".edition").textContent = `Revista · ${CFG.pais}`;
+  document.title = `Revista ${CFG.pais} | GTKM0 Magazine`;
+  document.querySelector(".edition").textContent = `Edición ${CFG.numero} · ${CFG.pais}`}`;
   document.querySelector('a[download]').setAttribute("href", CFG.pdf);
 
   $(async function(){
