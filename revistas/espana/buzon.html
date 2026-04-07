@@ -66,6 +66,7 @@
     -webkit-backdrop-filter: blur(10px);
     border-bottom:1px solid var(--border);
   }
+
   .topbar-inner{
     max-width:1180px;
     margin:0 auto;
@@ -76,12 +77,14 @@
     align-items:center;
     gap:10px;
   }
+
   .left,.right{
     display:flex;
     align-items:center;
     gap:10px;
     min-width:0;
   }
+
   .left{ justify-content:flex-start; }
   .right{ justify-content:flex-end; }
 
@@ -90,6 +93,7 @@
     line-height:1.05;
     min-width:0;
   }
+
   .brand{
     font-family:var(--font-display);
     font-size:16px;
@@ -98,6 +102,7 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
+
   .edition{
     margin-top:4px;
     font-family:var(--font-title);
@@ -129,11 +134,14 @@
     font-size:13px;
     cursor:pointer;
   }
+
   .btn:hover{ background: rgba(255,255,255,.10); }
+
   .btn.red{
     border-color: rgba(225,6,0,.55);
     background: rgba(225,6,0,.18);
   }
+
   .btn.red:hover{ background: rgba(225,6,0,.26); }
 
   .wrap{
@@ -148,15 +156,18 @@
     gap:18px;
     margin-bottom:18px;
   }
+
   .panel{
     border:1px solid var(--border);
     border-radius:18px;
     background:var(--card);
     box-shadow:var(--shadow);
   }
+
   .hero-copy{
     padding:22px;
   }
+
   h1{
     margin:0;
     font-family:var(--font-display);
@@ -165,6 +176,7 @@
     line-height:1.02;
     letter-spacing:.6px;
   }
+
   .intro{
     margin:12px 0 0;
     color:var(--muted);
@@ -172,18 +184,21 @@
     line-height:1.5;
     max-width:64ch;
   }
+
   .stats{
     display:grid;
     grid-template-columns: repeat(3,1fr);
     gap:12px;
     padding:18px;
   }
+
   .kpi{
     border:1px solid var(--border);
     border-radius:14px;
     background:rgba(0,0,0,.16);
     padding:14px;
   }
+
   .kpi .n{
     font-family:var(--font-title);
     font-size:28px;
@@ -191,6 +206,7 @@
     letter-spacing:1px;
     text-transform:uppercase;
   }
+
   .kpi .l{
     margin-top:4px;
     font-size:12px;
@@ -203,10 +219,12 @@
     gap:14px;
     margin-bottom:18px;
   }
+
   .search-wrap,
   .filters-wrap{
     padding:14px;
   }
+
   .label{
     font-family:var(--font-title);
     font-weight:700;
@@ -216,6 +234,7 @@
     color:var(--muted);
     margin-bottom:10px;
   }
+
   .search{
     width:100%;
     padding:12px 14px;
@@ -227,6 +246,7 @@
     font-size:14px;
     outline:none;
   }
+
   .search::placeholder{ color: rgba(255,255,255,.40); }
 
   .chips{
@@ -234,6 +254,7 @@
     flex-wrap:wrap;
     gap:8px;
   }
+
   .chip{
     border:1px solid var(--border);
     background:rgba(255,255,255,.05);
@@ -247,6 +268,7 @@
     letter-spacing:.8px;
     text-transform:uppercase;
   }
+
   .chip.active{
     border-color: rgba(225,6,0,.55);
     background: rgba(225,6,0,.18);
@@ -257,7 +279,7 @@
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    margin: 8px 0 14px;
+    margin:8px 0 14px;
     color:var(--muted);
     font-size:13px;
   }
@@ -265,9 +287,11 @@
   .city-section{
     margin:0 0 16px;
   }
+
   .city-card{
     overflow:hidden;
   }
+
   .city-head{
     padding:14px 16px;
     display:flex;
@@ -277,6 +301,7 @@
     border-bottom:1px solid var(--border);
     background: rgba(255,255,255,.03);
   }
+
   .city-name{
     font-family:var(--font-title);
     font-size:20px;
@@ -284,6 +309,7 @@
     letter-spacing:1px;
     text-transform:uppercase;
   }
+
   .city-count{
     font-size:12px;
     color:var(--muted);
@@ -296,21 +322,43 @@
     gap:12px;
     padding:16px;
   }
+
   .message{
     border:1px solid var(--border);
     border-radius:14px;
     background: rgba(0,0,0,.12);
     padding:14px;
   }
+
   .message-text{
     margin:0;
     font-size:15px;
     line-height:1.5;
   }
+
   .message-meta{
     margin-top:10px;
     color:var(--muted);
     font-size:13px;
+  }
+
+  .message-social{
+    margin-top:8px;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-size:12px;
+    color: rgba(255,255,255,.58);
+    word-break: break-word;
+  }
+
+  .social-icon{
+    width:14px;
+    height:14px;
+    display:block;
+    opacity:.78;
+    filter: brightness(0) invert(1);
+    flex: 0 0 auto;
   }
 
   .empty{
@@ -322,6 +370,7 @@
     text-align:center;
     background:rgba(255,255,255,.03);
   }
+
   .empty.show{ display:block; }
 
   .toast{
@@ -340,6 +389,7 @@
     transition: opacity .2s ease;
     z-index:9999;
   }
+
   .toast.show{ opacity:1; }
 
   footer{
@@ -364,7 +414,10 @@
 
   @media (max-width: 560px){
     .stats{ grid-template-columns: 1fr; }
-    .city-head{ align-items:flex-start; flex-direction:column; }
+    .city-head{
+      align-items:flex-start;
+      flex-direction:column;
+    }
   }
 </style>
 </head>
@@ -396,7 +449,7 @@
     <div class="panel hero-copy">
       <h1>Buzón Alboranista</h1>
       <p class="intro" id="introText">
-        Más de 315 mensajes dan respuesta a una misma pregunta. Aquí puedes leerlos completos, filtrarlos por ciudad y recorrer todas las voces que forman esta sección.
+        Más de 315 mensajes responden a una misma pregunta: ¿Qué te gustaría vivir o sentir en el concierto del Global Tour KM0 al que asistas? Aquí puedes leerlos completos, filtrarlos por ciudad y recorrer todas las voces de esta sección.
       </p>
     </div>
 
@@ -456,6 +509,7 @@
   const editionLabel = document.getElementById("editionLabel");
   const introText = document.getElementById("introText");
   const backToEdition = document.getElementById("backToEdition");
+
   editionLabel.textContent = CFG.editionLabel;
   introText.textContent = CFG.introText;
   backToEdition.href = CFG.editionPath;
@@ -483,14 +537,37 @@
       .trim();
   }
 
+  function escapeHtml(text){
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    };
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+  }
+
   function showToast(msg){
     const t = document.getElementById("toast");
     t.textContent = msg;
     t.classList.add("show");
-    setTimeout(()=>t.classList.remove("show"), 1400);
+    setTimeout(() => t.classList.remove("show"), 1400);
   }
 
-  document.getElementById("btnShare").addEventListener("click", async ()=>{
+  function getSocialIconPath(red){
+    const icons = {
+      instagram: "/GTKM0Magazine/assets/icons/instagram.svg",
+      tiktok: "/GTKM0Magazine/assets/icons/tiktok.svg",
+      twitter: "/GTKM0Magazine/assets/icons/x.svg",
+      x: "/GTKM0Magazine/assets/icons/x.svg",
+      youtube: "/GTKM0Magazine/assets/icons/youtube.svg",
+      facebook: "/GTKM0Magazine/assets/icons/facebook.svg"
+    };
+    return icons[red] || "/GTKM0Magazine/assets/icons/link.svg";
+  }
+
+  document.getElementById("btnShare").addEventListener("click", async () => {
     const url = window.location.href;
     try{
       if(navigator.share){
@@ -510,7 +587,7 @@
   });
 
   function buildChips(messages){
-    const cities = [...new Set(messages.map(m => m.ciudad).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    const cities = [...new Set(messages.map(m => m.ciudad).filter(Boolean))].sort((a,b) => a.localeCompare(b, "es"));
     chipsEl.innerHTML = "";
 
     const allBtn = document.createElement("button");
@@ -527,32 +604,39 @@
       chipsEl.appendChild(btn);
     });
 
-    chipsEl.addEventListener("click", (e)=>{
-      const btn = e.target.closest(".chip");
-      if(!btn) return;
-      selectedCity = btn.dataset.city;
-      [...chipsEl.querySelectorAll(".chip")].forEach(ch => ch.classList.toggle("active", ch === btn));
-      render();
-    }, { once:false });
-
     kpiCities.textContent = cities.length;
   }
 
+  chipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if(!btn) return;
+
+    selectedCity = btn.dataset.city;
+    [...chipsEl.querySelectorAll(".chip")].forEach(ch => {
+      ch.classList.toggle("active", ch === btn);
+    });
+
+    render();
+  });
+
   function groupByCity(messages){
     const groups = new Map();
+
     messages.forEach(msg => {
       const city = msg.ciudad || "Sin ciudad";
       if(!groups.has(city)) groups.set(city, []);
       groups.get(city).push(msg);
     });
-    return [...groups.entries()].sort((a,b)=>a[0].localeCompare(b[0],'es'));
+
+    return [...groups.entries()].sort((a,b) => a[0].localeCompare(b[0], "es"));
   }
 
   function render(){
     const q = normalize(searchInput.value);
-    let filtered = allMessages.filter(msg => {
+
+    const filtered = allMessages.filter(msg => {
       const matchesCity = selectedCity === "Todas" || msg.ciudad === selectedCity;
-      const haystack = normalize([msg.ciudad, msg.nombre, msg.mensaje].join(" "));
+      const haystack = normalize([msg.ciudad, msg.nombre, msg.mensaje, msg.usuario, msg.red].join(" "));
       const matchesSearch = !q || haystack.includes(q);
       return matchesCity && matchesSearch;
     });
@@ -569,6 +653,7 @@
     }
 
     emptyState.classList.remove("show");
+
     grouped.forEach(([city, messages]) => {
       const section = document.createElement("section");
       section.className = "city-section";
@@ -576,19 +661,34 @@
       section.innerHTML = `
         <article class="panel city-card">
           <div class="city-head">
-            <div class="city-name">${city}</div>
+            <div class="city-name">${escapeHtml(city)}</div>
             <div class="city-count">${messages.length} ${messages.length === 1 ? "mensaje" : "mensajes"}</div>
           </div>
           <div class="messages">
             ${messages.map(msg => `
               <article class="message">
                 <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
-                <div class="message-meta">— ${escapeHtml(msg.nombre || "Anónimo")}</div>
+
+                <div class="message-meta">
+                  — ${escapeHtml(msg.nombre || "Anónimo")}
+                </div>
+
+                ${msg.red && msg.usuario ? `
+                  <div class="message-social">
+                    <img
+                      src="${getSocialIconPath(msg.red)}"
+                      alt="${escapeHtml(msg.red || "red social")}"
+                      class="social-icon"
+                    >
+                    <span>${escapeHtml(msg.usuario)}</span>
+                  </div>
+                ` : ""}
               </article>
             `).join("")}
           </div>
         </article>
       `;
+
       resultsEl.appendChild(section);
     });
 
@@ -597,37 +697,30 @@
     kpiShown.textContent = filtered.length;
   }
 
-  function escapeHtml(text){
-    const map = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    };
-    return String(text).replace(/[&<>"']/g, m => map[m]);
-  }
-
   async function init(){
     try{
       const res = await fetch(CFG.jsonPath);
       if(!res.ok) throw new Error("No se pudo cargar el JSON");
+
       allMessages = await res.json();
 
       kpiMessages.textContent = allMessages.length;
       buildChips(allMessages);
       render();
+
     }catch(err){
       resultsEl.innerHTML = `
         <div class="panel" style="padding:20px;">
           No se pudieron cargar los mensajes. Revisa la ruta de <code>mensajes.json</code>.
-        </div>`;
+        </div>
+      `;
       resultsText.textContent = "Error de carga";
       console.error(err);
     }
   }
 
   searchInput.addEventListener("input", render);
+
   init();
 </script>
 
