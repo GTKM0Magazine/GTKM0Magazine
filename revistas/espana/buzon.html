@@ -214,11 +214,12 @@
   }
 
   .toolbar{
-    display:grid;
-    grid-template-columns: 1.15fr .85fr;
-    gap:14px;
-    margin-bottom:18px;
-  }
+  display:grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+  gap:14px;
+  margin-bottom:18px;
+  align-items:start;
+}
 
   .search-wrap,
   .filters-wrap{
@@ -255,19 +256,20 @@
     gap:8px;
   }
 
-  .chip{
-    border:1px solid var(--border);
-    background:rgba(255,255,255,.05);
-    color:var(--text);
-    border-radius:999px;
-    padding:8px 10px;
-    font-size:12px;
-    cursor:pointer;
-    font-family:var(--font-title);
-    font-weight:700;
-    letter-spacing:.8px;
-    text-transform:uppercase;
-  }
+.chip{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  border-radius:999px;
+  padding:7px 9px;
+  font-size:11px;
+  cursor:pointer;
+  font-family:var(--font-title);
+  font-weight:700;
+  letter-spacing:.7px;
+  text-transform:uppercase;
+  line-height:1;
+}
 
   .chip.active{
     border-color: rgba(225,6,0,.55);
@@ -316,6 +318,19 @@
     white-space:nowrap;
   }
 
+.filters-wrap{
+  max-height: 415px;
+  overflow: auto;
+}
+
+.filters-wrap::-webkit-scrollbar{
+  width:8px;
+}
+.filters-wrap::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.12);
+  border-radius:999px;
+}
+
   .messages{
     display:grid;
     grid-template-columns: repeat(2, minmax(0,1fr));
@@ -336,11 +351,35 @@
     line-height:1.5;
   }
 
-  .message-meta{
-    margin-top:10px;
-    color:var(--muted);
-    font-size:13px;
-  }
+.message-meta{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.5;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  align-items:center;
+}
+
+.meta-sep{
+  opacity:.45;
+}
+
+.meta-social{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+}
+
+.social-icon{
+  width:13px;
+  height:13px;
+  display:block;
+  opacity:.78;
+  filter: brightness(0) invert(1);
+  flex: 0 0 auto;
+}
 
   .message-location{
     margin-top:6px;
@@ -353,6 +392,8 @@
     display:flex;
     flex-wrap:wrap;
     gap:6px;
+  opacity:.92;
+}
   }
 
   .concert-tag{
@@ -375,15 +416,6 @@
     font-size:12px;
     color: rgba(255,255,255,.58);
     word-break: break-word;
-  }
-
-  .social-icon{
-    width:14px;
-    height:14px;
-    display:block;
-    opacity:.78;
-    filter: brightness(0) invert(1);
-    flex: 0 0 auto;
   }
 
   .empty{
@@ -598,10 +630,40 @@ const kpiCities = document.getElementById("kpiCities");
     return [];
   }
 
+function parseConcertDate(concert){
+  const match = String(concert).match(/^(\d{2})\/(\d{2})/);
+  if(!match) return null;
+  const day = Number(match[1]);
+  const month = Number(match[2]);
+  return { day, month, sortValue: month * 100 + day };
+}
+
+function getUniqueCities(messages){
+  const cities = new Set();
+  messages.forEach(msg => {
+    if(msg.ciudad && msg.ciudad.trim()){
+      cities.add(msg.ciudad.trim());
+    }
+  });
+  return cities;
+}
+
   function buildChips(messages){
     const concertSet = new Set();
     messages.forEach(m => getConcerts(m).forEach(c => concertSet.add(c)));
-    const concerts = [...concertSet].sort((a,b) => a.localeCompare(b, "es"));
+    const concerts = [...concertSet].sort((a, b) => {
+  const da = parseConcertDate(a);
+  const db = parseConcertDate(b);
+
+  if(da && db && da.sortValue !== db.sortValue){
+    return da.sortValue - db.sortValue;
+  }
+
+  if(da && !db) return -1;
+  if(!da && db) return 1;
+
+  return a.localeCompare(b, "es");
+});
 
     chipsEl.innerHTML = "";
 
@@ -671,13 +733,26 @@ const kpiCities = document.getElementById("kpiCities");
       }
     });
 
-    return [...groups.entries()].sort((a,b) => a[0].localeCompare(b[0], "es"));
+    return [...groups.entries()].sort((a, b) => {
+  const da = parseConcertDate(a[0]);
+  const db = parseConcertDate(b[0]);
+
+  if(da && db && da.sortValue !== db.sortValue){
+    return da.sortValue - db.sortValue;
   }
+
+  if(da && !db) return -1;
+  if(!da && db) return 1;
+
+  return a[0].localeCompare(b[0], "es");
+});
 
   function render(){
     const q = normalize(searchInput.value);
 
     const filtered = allMessages.filter(msg => {
+const uniqueCities = getUniqueCities(allMessages);
+kpiCities.textContent = uniqueCities.size;
       const concerts = getConcerts(msg);
       const matchesConcert = selectedConcert === "Todos" || concerts.includes(selectedConcert);
       const haystack = normalize([
@@ -720,29 +795,31 @@ const kpiCities = document.getElementById("kpiCities");
               <article class="message">
                 <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
 
-                <div class="message-meta">
-                  — ${escapeHtml(msg.nombre || "Anónimo")}
-                </div>
+<div class="message-meta">
+  <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
 
-                ${msg.ciudad ? `
-                  <div class="message-location">${escapeHtml(msg.ciudad)}</div>
-                ` : ""}
+  ${msg.ciudad ? `
+    <span class="meta-sep">•</span>
+    <span>${escapeHtml(msg.ciudad)}</span>
+  ` : ""}
 
-                ${getConcerts(msg).length ? `
-                  <div class="message-concerts">
-                    ${getConcerts(msg).map(c => `<span class="concert-tag">${escapeHtml(c)}</span>`).join("")}
-                  </div>
-                ` : ""}
+  ${msg.red && msg.usuario ? `
+    <span class="meta-sep">•</span>
+    <span class="meta-social">
+      <img
+        src="${getSocialIconPath(msg.red)}"
+        alt="${escapeHtml(msg.red || "red social")}"
+        class="social-icon"
+      >
+      <span>${escapeHtml(msg.usuario)}</span>
+    </span>
+  ` : ""}
 
-                ${msg.red && msg.usuario ? `
-                  <div class="message-social">
-                    <img
-                      src="${getSocialIconPath(msg.red)}"
-                      alt="${escapeHtml(msg.red || "red social")}"
-                      class="social-icon"
-                    >
-                    <span>${escapeHtml(msg.usuario)}</span>
-                  </div>
+  ${getConcerts(msg).length ? `
+    <span class="meta-sep">•</span>
+    <span class="meta-concerts">${getConcerts(msg).map(c => escapeHtml(c)).join(" · ")}</span>
+  ` : ""}
+</div>
                 ` : ""}
               </article>
             `).join("")}
