@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Buzón Alboranista | Global Tour Km0 Magazine</title>
+<title>Buzón Alboranista España | Global Tour Km0 Magazine</title>
 
 <style>
   @font-face{
@@ -214,12 +214,12 @@
   }
 
   .toolbar{
-  display:grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
-  gap:14px;
-  margin-bottom:18px;
-  align-items:start;
-}
+    display:grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+    gap:14px;
+    margin-bottom:18px;
+    align-items:start;
+  }
 
   .search-wrap,
   .filters-wrap{
@@ -250,26 +250,40 @@
 
   .search::placeholder{ color: rgba(255,255,255,.40); }
 
+  .filters-wrap{
+    max-height:415px;
+    overflow:auto;
+  }
+
+  .filters-wrap::-webkit-scrollbar{
+    width:8px;
+  }
+
+  .filters-wrap::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,.12);
+    border-radius:999px;
+  }
+
   .chips{
     display:flex;
     flex-wrap:wrap;
     gap:8px;
   }
 
-.chip{
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.05);
-  color:var(--text);
-  border-radius:999px;
-  padding:7px 9px;
-  font-size:11px;
-  cursor:pointer;
-  font-family:var(--font-title);
-  font-weight:700;
-  letter-spacing:.7px;
-  text-transform:uppercase;
-  line-height:1;
-}
+  .chip{
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    border-radius:999px;
+    padding:7px 9px;
+    font-size:11px;
+    cursor:pointer;
+    font-family:var(--font-title);
+    font-weight:700;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+    line-height:1;
+  }
 
   .chip.active{
     border-color: rgba(225,6,0,.55);
@@ -318,19 +332,6 @@
     white-space:nowrap;
   }
 
-.filters-wrap{
-  max-height: 415px;
-  overflow: auto;
-}
-
-.filters-wrap::-webkit-scrollbar{
-  width:8px;
-}
-.filters-wrap::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.12);
-  border-radius:999px;
-}
-
   .messages{
     display:grid;
     grid-template-columns: repeat(2, minmax(0,1fr));
@@ -351,71 +352,38 @@
     line-height:1.5;
   }
 
-.message-meta{
-  margin-top:10px;
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.5;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  align-items:center;
-}
-
-.meta-sep{
-  opacity:.45;
-}
-
-.meta-social{
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-}
-
-.social-icon{
-  width:13px;
-  height:13px;
-  display:block;
-  opacity:.78;
-  filter: brightness(0) invert(1);
-  flex: 0 0 auto;
-}
-
-  .message-location{
-    margin-top:6px;
-    font-size:12px;
-    color: rgba(255,255,255,.58);
-  }
-
-  .message-concerts{
-    margin-top:8px;
+  .message-meta{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
     display:flex;
     flex-wrap:wrap;
     gap:6px;
-  opacity:.92;
-}
+    align-items:center;
   }
 
-  .concert-tag{
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
-    border:1px solid var(--border);
-    border-radius:999px;
-    background: rgba(255,255,255,.04);
-    padding:6px 8px;
-    font-size:11px;
-    color:var(--text);
+  .meta-sep{
+    opacity:.45;
   }
 
-  .message-social{
-    margin-top:8px;
+  .meta-social{
     display:inline-flex;
     align-items:center;
-    gap:6px;
-    font-size:12px;
-    color: rgba(255,255,255,.58);
-    word-break: break-word;
+    gap:5px;
+  }
+
+  .meta-concerts{
+    opacity:.92;
+  }
+
+  .social-icon{
+    width:13px;
+    height:13px;
+    display:block;
+    opacity:.78;
+    filter: brightness(0) invert(1);
+    flex:0 0 auto;
   }
 
   .empty{
@@ -506,7 +474,7 @@
     <div class="panel hero-copy">
       <h1>Buzón Alboranista</h1>
       <p class="intro" id="introText">
-        Más de 315 mensajes responden a una misma pregunta. Aquí puedes recorrerlos por concierto, buscarlos por nombre, ciudad o texto y ver qué espera vivir cada fan en su fecha del Global Tour KM0.
+        Más de 320 personas dieron respuesta a una misma pregunta: <b>¿Qué te gustaría vivir o sentir en el concierto del Global Tour KM0 al que asistas?</b> Aquí puedes recorrerlos por concierto, buscarlos por ciudad o nombre y ver qué espera vivir cada fan en su fecha del Global Tour KM0.
       </p>
     </div>
 
@@ -519,10 +487,10 @@
         <div class="n" id="kpiConcerts">0</div>
         <div class="l">Conciertos</div>
       </div>
-<div class="kpi">
-  <div class="n" id="kpiCities">0</div>
-  <div class="l">Ciudades</div>
-</div>
+      <div class="kpi">
+        <div class="n" id="kpiCities">0</div>
+        <div class="l">Ciudades</div>
+      </div>
     </div>
   </section>
 
@@ -548,7 +516,7 @@
 </main>
 
 <footer>
-  Global Tour Km0 Magazine · Archivo completo del Buzón Alboranista
+  Global Tour Km0 Magazine · Archivo completo del Buzón Alboranista en España
 </footer>
 
 <div class="toast" id="toast">Enlace copiado ✨</div>
@@ -580,7 +548,7 @@
 
   const kpiMessages = document.getElementById("kpiMessages");
   const kpiConcerts = document.getElementById("kpiConcerts");
-const kpiCities = document.getElementById("kpiCities");
+  const kpiCities = document.getElementById("kpiCities");
 
   let allMessages = [];
   let selectedConcert = "Todos";
@@ -625,45 +593,44 @@ const kpiCities = document.getElementById("kpiCities");
   }
 
   function getConcerts(msg){
-    if(Array.isArray(msg.conciertos)) return msg.conciertos.filter(Boolean);
-    if(typeof msg.concierto === "string" && msg.concierto.trim()) return [msg.concierto.trim()];
+    if (Array.isArray(msg.conciertos)) return msg.conciertos.filter(Boolean);
+    if (typeof msg.concierto === "string" && msg.concierto.trim()) return [msg.concierto.trim()];
     return [];
   }
 
-function parseConcertDate(concert){
-  const match = String(concert).match(/^(\d{2})\/(\d{2})/);
-  if(!match) return null;
-  const day = Number(match[1]);
-  const month = Number(match[2]);
-  return { day, month, sortValue: month * 100 + day };
-}
+  function parseConcertDate(concert){
+    const match = String(concert).match(/^(\d{2})\/(\d{2})/);
+    if (!match) return null;
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    return { day, month, sortValue: month * 100 + day };
+  }
 
-function getUniqueCities(messages){
-  const cities = new Set();
-  messages.forEach(msg => {
-    if(msg.ciudad && msg.ciudad.trim()){
-      cities.add(msg.ciudad.trim());
+  function getUniqueCities(messages){
+    const cities = new Set();
+    messages.forEach(msg => {
+      if (msg.ciudad && msg.ciudad.trim()) cities.add(msg.ciudad.trim());
+    });
+    return cities;
+  }
+
+  function sortConcerts(a, b){
+    const da = parseConcertDate(a);
+    const db = parseConcertDate(b);
+
+    if (da && db && da.sortValue !== db.sortValue){
+      return da.sortValue - db.sortValue;
     }
-  });
-  return cities;
-}
+    if (da && !db) return -1;
+    if (!da && db) return 1;
+
+    return a.localeCompare(b, "es");
+  }
 
   function buildChips(messages){
     const concertSet = new Set();
     messages.forEach(m => getConcerts(m).forEach(c => concertSet.add(c)));
-    const concerts = [...concertSet].sort((a, b) => {
-  const da = parseConcertDate(a);
-  const db = parseConcertDate(b);
-
-  if(da && db && da.sortValue !== db.sortValue){
-    return da.sortValue - db.sortValue;
-  }
-
-  if(da && !db) return -1;
-  if(!da && db) return 1;
-
-  return a.localeCompare(b, "es");
-});
+    const concerts = [...concertSet].sort(sortConcerts);
 
     chipsEl.innerHTML = "";
 
@@ -686,7 +653,7 @@ function getUniqueCities(messages){
 
   chipsEl.addEventListener("click", (e) => {
     const btn = e.target.closest(".chip");
-    if(!btn) return;
+    if (!btn) return;
 
     selectedConcert = btn.dataset.concert;
     [...chipsEl.querySelectorAll(".chip")].forEach(ch => {
@@ -699,17 +666,17 @@ function getUniqueCities(messages){
   document.getElementById("btnShare").addEventListener("click", async () => {
     const url = window.location.href;
     try{
-      if(navigator.share){
+      if (navigator.share){
         await navigator.share({ title: document.title, url });
-      }else{
+      } else {
         await navigator.clipboard.writeText(url);
         showToast("Enlace copiado ✨");
       }
-    }catch(e){
+    } catch(e){
       try{
         await navigator.clipboard.writeText(url);
         showToast("Enlace copiado ✨");
-      }catch(_){
+      } catch(_){
         showToast("No se pudo copiar 😅");
       }
     }
@@ -720,39 +687,27 @@ function getUniqueCities(messages){
 
     messages.forEach(msg => {
       const concerts = getConcerts(msg);
-      if(concerts.length){
+
+      if (concerts.length){
         concerts.forEach(concert => {
-          if(selectedConcert !== "Todos" && concert !== selectedConcert) return;
-          if(!groups.has(concert)) groups.set(concert, []);
+          if (selectedConcert !== "Todos" && concert !== selectedConcert) return;
+          if (!groups.has(concert)) groups.set(concert, []);
           groups.get(concert).push(msg);
         });
-      } else if(selectedConcert === "Todos"){
+      } else if (selectedConcert === "Todos"){
         const fallback = "Sin concierto asignado";
-        if(!groups.has(fallback)) groups.set(fallback, []);
+        if (!groups.has(fallback)) groups.set(fallback, []);
         groups.get(fallback).push(msg);
       }
     });
 
-    return [...groups.entries()].sort((a, b) => {
-  const da = parseConcertDate(a[0]);
-  const db = parseConcertDate(b[0]);
-
-  if(da && db && da.sortValue !== db.sortValue){
-    return da.sortValue - db.sortValue;
+    return [...groups.entries()].sort((a, b) => sortConcerts(a[0], b[0]));
   }
-
-  if(da && !db) return -1;
-  if(!da && db) return 1;
-
-  return a[0].localeCompare(b[0], "es");
-});
 
   function render(){
     const q = normalize(searchInput.value);
 
     const filtered = allMessages.filter(msg => {
-const uniqueCities = getUniqueCities(allMessages);
-kpiCities.textContent = uniqueCities.size;
       const concerts = getConcerts(msg);
       const matchesConcert = selectedConcert === "Todos" || concerts.includes(selectedConcert);
       const haystack = normalize([
@@ -763,6 +718,7 @@ kpiCities.textContent = uniqueCities.size;
         msg.red,
         concerts.join(" ")
       ].join(" "));
+
       const matchesSearch = !q || haystack.includes(q);
       return matchesConcert && matchesSearch;
     });
@@ -770,11 +726,10 @@ kpiCities.textContent = uniqueCities.size;
     const grouped = groupByConcert(filtered);
     resultsEl.innerHTML = "";
 
-    if(!filtered.length){
+    if (!filtered.length){
       emptyState.classList.add("show");
       resultsText.textContent = "0 mensajes encontrados";
       currentFilter.textContent = selectedConcert === "Todos" ? "Todos los conciertos" : selectedConcert;
-      kpiShown.textContent = "0";
       return;
     }
 
@@ -795,32 +750,31 @@ kpiCities.textContent = uniqueCities.size;
               <article class="message">
                 <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
 
-<div class="message-meta">
-  <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
+                <div class="message-meta">
+                  <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
 
-  ${msg.ciudad ? `
-    <span class="meta-sep">•</span>
-    <span>${escapeHtml(msg.ciudad)}</span>
-  ` : ""}
+                  ${msg.ciudad ? `
+                    <span class="meta-sep">•</span>
+                    <span>${escapeHtml(msg.ciudad)}</span>
+                  ` : ""}
 
-  ${msg.red && msg.usuario ? `
-    <span class="meta-sep">•</span>
-    <span class="meta-social">
-      <img
-        src="${getSocialIconPath(msg.red)}"
-        alt="${escapeHtml(msg.red || "red social")}"
-        class="social-icon"
-      >
-      <span>${escapeHtml(msg.usuario)}</span>
-    </span>
-  ` : ""}
+                  ${msg.red && msg.usuario ? `
+                    <span class="meta-sep">•</span>
+                    <span class="meta-social">
+                      <img
+                        src="${getSocialIconPath(msg.red)}"
+                        alt="${escapeHtml(msg.red || "red social")}"
+                        class="social-icon"
+                      >
+                      <span>${escapeHtml(msg.usuario)}</span>
+                    </span>
+                  ` : ""}
 
-  ${getConcerts(msg).length ? `
-    <span class="meta-sep">•</span>
-    <span class="meta-concerts">${getConcerts(msg).map(c => escapeHtml(c)).join(" · ")}</span>
-  ` : ""}
-</div>
-                ` : ""}
+                  ${getConcerts(msg).length ? `
+                    <span class="meta-sep">•</span>
+                    <span class="meta-concerts">${getConcerts(msg).map(c => escapeHtml(c)).join(" · ")}</span>
+                  ` : ""}
+                </div>
               </article>
             `).join("")}
           </div>
@@ -837,15 +791,17 @@ kpiCities.textContent = uniqueCities.size;
   async function init(){
     try{
       const res = await fetch(CFG.jsonPath);
-      if(!res.ok) throw new Error("No se pudo cargar el JSON");
+      if (!res.ok) throw new Error("No se pudo cargar el JSON");
 
       allMessages = await res.json();
 
       kpiMessages.textContent = allMessages.length;
+      kpiCities.textContent = getUniqueCities(allMessages).size;
+
       buildChips(allMessages);
       render();
 
-    }catch(err){
+    } catch(err){
       resultsEl.innerHTML = `
         <div class="panel" style="padding:20px;">
           No se pudieron cargar los mensajes. Revisa la ruta de <code>mensajes.json</code>.
