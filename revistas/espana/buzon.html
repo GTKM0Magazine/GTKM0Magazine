@@ -215,7 +215,7 @@
 
   .toolbar{
     display:grid;
-    grid-template-columns: 1.2fr .8fr;
+    grid-template-columns: 1.15fr .85fr;
     gap:14px;
     margin-bottom:18px;
   }
@@ -284,15 +284,15 @@
     font-size:13px;
   }
 
-  .city-section{
+  .group-section{
     margin:0 0 16px;
   }
 
-  .city-card{
+  .group-card{
     overflow:hidden;
   }
 
-  .city-head{
+  .group-head{
     padding:14px 16px;
     display:flex;
     align-items:center;
@@ -302,7 +302,7 @@
     background: rgba(255,255,255,.03);
   }
 
-  .city-name{
+  .group-name{
     font-family:var(--font-title);
     font-size:20px;
     font-weight:700;
@@ -310,7 +310,7 @@
     text-transform:uppercase;
   }
 
-  .city-count{
+  .group-count{
     font-size:12px;
     color:var(--muted);
     white-space:nowrap;
@@ -340,6 +340,31 @@
     margin-top:10px;
     color:var(--muted);
     font-size:13px;
+  }
+
+  .message-location{
+    margin-top:6px;
+    font-size:12px;
+    color: rgba(255,255,255,.58);
+  }
+
+  .message-concerts{
+    margin-top:8px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+
+  .concert-tag{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    background: rgba(255,255,255,.04);
+    padding:6px 8px;
+    font-size:11px;
+    color:var(--text);
   }
 
   .message-social{
@@ -414,7 +439,7 @@
 
   @media (max-width: 560px){
     .stats{ grid-template-columns: 1fr; }
-    .city-head{
+    .group-head{
       align-items:flex-start;
       flex-direction:column;
     }
@@ -449,7 +474,7 @@
     <div class="panel hero-copy">
       <h1>Buzón Alboranista</h1>
       <p class="intro" id="introText">
-        Más de 315 mensajes responden a una misma pregunta: ¿Qué te gustaría vivir o sentir en el concierto del Global Tour KM0 al que asistas? Aquí puedes leerlos completos, filtrarlos por ciudad y recorrer todas las voces de esta sección.
+        Más de 315 mensajes responden a una misma pregunta. Aquí puedes recorrerlos por concierto, buscarlos por nombre, ciudad o texto y ver qué espera vivir cada fan en su fecha del Global Tour KM0.
       </p>
     </div>
 
@@ -459,31 +484,31 @@
         <div class="l">Mensajes</div>
       </div>
       <div class="kpi">
-        <div class="n" id="kpiCities">0</div>
-        <div class="l">Ciudades</div>
+        <div class="n" id="kpiConcerts">0</div>
+        <div class="l">Conciertos</div>
       </div>
-      <div class="kpi">
-        <div class="n" id="kpiShown">0</div>
-        <div class="l">Visibles</div>
-      </div>
+<div class="kpi">
+  <div class="n" id="kpiCities">0</div>
+  <div class="l">Ciudades</div>
+</div>
     </div>
   </section>
 
   <section class="toolbar">
     <div class="panel search-wrap">
       <div class="label">Buscar</div>
-      <input id="searchInput" class="search" type="text" placeholder="Busca por nombre, ciudad o una palabra del mensaje…">
+      <input id="searchInput" class="search" type="text" placeholder="Busca por nombre, ciudad, concierto o una palabra del mensaje…">
     </div>
 
     <div class="panel filters-wrap">
-      <div class="label">Ciudades</div>
+      <div class="label">Conciertos</div>
       <div class="chips" id="chips"></div>
     </div>
   </section>
 
   <div class="results-bar">
     <div id="resultsText">Cargando mensajes…</div>
-    <div id="currentFilter">Todas las ciudades</div>
+    <div id="currentFilter">Todos los conciertos</div>
   </div>
 
   <section id="results"></section>
@@ -501,7 +526,7 @@
     pais: "España",
     slug: "espana",
     editionLabel: "Edición España · Buzón Alboranista",
-    introText: "Más de 315 mensajes responden a una misma pregunta: ¿Qué te gustaría vivir o sentir en el concierto del Global Tour KM0 al que asistas? Aquí puedes leerlos completos, filtrarlos por ciudad y recorrer todas las voces de esta sección.",
+    introText: "Más de 315 mensajes responden a una misma pregunta: ¿Qué te gustaría vivir o sentir en el concierto del Global Tour KM0 al que asistas? Aquí puedes recorrerlos por concierto, buscarlos por nombre, ciudad o texto y ver qué espera vivir cada fan en su fecha.",
     jsonPath: "/GTKM0Magazine/revistas/espana/mensajes.json",
     editionPath: "/GTKM0Magazine/revistas/espana/"
   };
@@ -522,11 +547,11 @@
   const currentFilter = document.getElementById("currentFilter");
 
   const kpiMessages = document.getElementById("kpiMessages");
-  const kpiCities = document.getElementById("kpiCities");
-  const kpiShown = document.getElementById("kpiShown");
+  const kpiConcerts = document.getElementById("kpiConcerts");
+const kpiCities = document.getElementById("kpiCities");
 
   let allMessages = [];
-  let selectedCity = "Todas";
+  let selectedConcert = "Todos";
 
   function normalize(text){
     return (text || "")
@@ -567,6 +592,48 @@
     return icons[red] || "/GTKM0Magazine/assets/icons/link.svg";
   }
 
+  function getConcerts(msg){
+    if(Array.isArray(msg.conciertos)) return msg.conciertos.filter(Boolean);
+    if(typeof msg.concierto === "string" && msg.concierto.trim()) return [msg.concierto.trim()];
+    return [];
+  }
+
+  function buildChips(messages){
+    const concertSet = new Set();
+    messages.forEach(m => getConcerts(m).forEach(c => concertSet.add(c)));
+    const concerts = [...concertSet].sort((a,b) => a.localeCompare(b, "es"));
+
+    chipsEl.innerHTML = "";
+
+    const allBtn = document.createElement("button");
+    allBtn.className = "chip active";
+    allBtn.textContent = "Todos";
+    allBtn.dataset.concert = "Todos";
+    chipsEl.appendChild(allBtn);
+
+    concerts.forEach(concert => {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = concert;
+      btn.dataset.concert = concert;
+      chipsEl.appendChild(btn);
+    });
+
+    kpiConcerts.textContent = concerts.length;
+  }
+
+  chipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if(!btn) return;
+
+    selectedConcert = btn.dataset.concert;
+    [...chipsEl.querySelectorAll(".chip")].forEach(ch => {
+      ch.classList.toggle("active", ch === btn);
+    });
+
+    render();
+  });
+
   document.getElementById("btnShare").addEventListener("click", async () => {
     const url = window.location.href;
     try{
@@ -586,46 +653,22 @@
     }
   });
 
-  function buildChips(messages){
-    const cities = [...new Set(messages.map(m => m.ciudad).filter(Boolean))].sort((a,b) => a.localeCompare(b, "es"));
-    chipsEl.innerHTML = "";
-
-    const allBtn = document.createElement("button");
-    allBtn.className = "chip active";
-    allBtn.textContent = "Todas";
-    allBtn.dataset.city = "Todas";
-    chipsEl.appendChild(allBtn);
-
-    cities.forEach(city => {
-      const btn = document.createElement("button");
-      btn.className = "chip";
-      btn.textContent = city;
-      btn.dataset.city = city;
-      chipsEl.appendChild(btn);
-    });
-
-    kpiCities.textContent = cities.length;
-  }
-
-  chipsEl.addEventListener("click", (e) => {
-    const btn = e.target.closest(".chip");
-    if(!btn) return;
-
-    selectedCity = btn.dataset.city;
-    [...chipsEl.querySelectorAll(".chip")].forEach(ch => {
-      ch.classList.toggle("active", ch === btn);
-    });
-
-    render();
-  });
-
-  function groupByCity(messages){
+  function groupByConcert(messages){
     const groups = new Map();
 
     messages.forEach(msg => {
-      const city = msg.ciudad || "Sin ciudad";
-      if(!groups.has(city)) groups.set(city, []);
-      groups.get(city).push(msg);
+      const concerts = getConcerts(msg);
+      if(concerts.length){
+        concerts.forEach(concert => {
+          if(selectedConcert !== "Todos" && concert !== selectedConcert) return;
+          if(!groups.has(concert)) groups.set(concert, []);
+          groups.get(concert).push(msg);
+        });
+      } else if(selectedConcert === "Todos"){
+        const fallback = "Sin concierto asignado";
+        if(!groups.has(fallback)) groups.set(fallback, []);
+        groups.get(fallback).push(msg);
+      }
     });
 
     return [...groups.entries()].sort((a,b) => a[0].localeCompare(b[0], "es"));
@@ -635,34 +678,42 @@
     const q = normalize(searchInput.value);
 
     const filtered = allMessages.filter(msg => {
-      const matchesCity = selectedCity === "Todas" || msg.ciudad === selectedCity;
-      const haystack = normalize([msg.ciudad, msg.nombre, msg.mensaje, msg.usuario, msg.red].join(" "));
+      const concerts = getConcerts(msg);
+      const matchesConcert = selectedConcert === "Todos" || concerts.includes(selectedConcert);
+      const haystack = normalize([
+        msg.ciudad,
+        msg.nombre,
+        msg.mensaje,
+        msg.usuario,
+        msg.red,
+        concerts.join(" ")
+      ].join(" "));
       const matchesSearch = !q || haystack.includes(q);
-      return matchesCity && matchesSearch;
+      return matchesConcert && matchesSearch;
     });
 
-    const grouped = groupByCity(filtered);
+    const grouped = groupByConcert(filtered);
     resultsEl.innerHTML = "";
 
     if(!filtered.length){
       emptyState.classList.add("show");
       resultsText.textContent = "0 mensajes encontrados";
-      currentFilter.textContent = selectedCity === "Todas" ? "Todas las ciudades" : selectedCity;
+      currentFilter.textContent = selectedConcert === "Todos" ? "Todos los conciertos" : selectedConcert;
       kpiShown.textContent = "0";
       return;
     }
 
     emptyState.classList.remove("show");
 
-    grouped.forEach(([city, messages]) => {
+    grouped.forEach(([concert, messages]) => {
       const section = document.createElement("section");
-      section.className = "city-section";
+      section.className = "group-section";
 
       section.innerHTML = `
-        <article class="panel city-card">
-          <div class="city-head">
-            <div class="city-name">${escapeHtml(city)}</div>
-            <div class="city-count">${messages.length} ${messages.length === 1 ? "mensaje" : "mensajes"}</div>
+        <article class="panel group-card">
+          <div class="group-head">
+            <div class="group-name">${escapeHtml(concert)}</div>
+            <div class="group-count">${messages.length} ${messages.length === 1 ? "mensaje" : "mensajes"}</div>
           </div>
           <div class="messages">
             ${messages.map(msg => `
@@ -672,6 +723,16 @@
                 <div class="message-meta">
                   — ${escapeHtml(msg.nombre || "Anónimo")}
                 </div>
+
+                ${msg.ciudad ? `
+                  <div class="message-location">${escapeHtml(msg.ciudad)}</div>
+                ` : ""}
+
+                ${getConcerts(msg).length ? `
+                  <div class="message-concerts">
+                    ${getConcerts(msg).map(c => `<span class="concert-tag">${escapeHtml(c)}</span>`).join("")}
+                  </div>
+                ` : ""}
 
                 ${msg.red && msg.usuario ? `
                   <div class="message-social">
@@ -693,8 +754,7 @@
     });
 
     resultsText.textContent = `${filtered.length} ${filtered.length === 1 ? "mensaje encontrado" : "mensajes encontrados"}`;
-    currentFilter.textContent = selectedCity === "Todas" ? "Todas las ciudades" : selectedCity;
-    kpiShown.textContent = filtered.length;
+    currentFilter.textContent = selectedConcert === "Todos" ? "Todos los conciertos" : selectedConcert;
   }
 
   async function init(){
@@ -720,7 +780,6 @@
   }
 
   searchInput.addEventListener("input", render);
-
   init();
 </script>
 
