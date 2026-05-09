@@ -504,18 +504,6 @@
     return cities;
   }
 
-  function groupByCity(messages){
-    const groups = new Map();
-
-    messages.forEach(msg => {
-      const city = msg.ciudad && msg.ciudad.trim() ? msg.ciudad.trim() : "Sin ciudad";
-      if (!groups.has(city)) groups.set(city, []);
-      groups.get(city).push(msg);
-    });
-
-    return [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0], "es"));
-  }
-
   document.getElementById("btnShare").addEventListener("click", async () => {
     const url = window.location.href;
     try{
@@ -535,6 +523,23 @@
     }
   });
 
+  function createMessageCard(msg){
+    return `
+      <article class="message">
+        <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
+
+        <div class="message-meta">
+          <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
+
+          ${msg.ciudad ? `
+            <span class="meta-sep">•</span>
+            <span>${escapeHtml(msg.ciudad)}</span>
+          ` : ""}
+        </div>
+      </article>
+    `;
+  }
+
   function render(){
     const q = normalize(searchInput.value);
 
@@ -548,7 +553,6 @@
       return !q || haystack.includes(q);
     });
 
-    const grouped = groupByCity(filtered);
     resultsEl.innerHTML = "";
 
     if (!filtered.length){
@@ -560,39 +564,25 @@
 
     emptyState.classList.remove("show");
 
-    grouped.forEach(([city, messages]) => {
-      const section = document.createElement("section");
-      section.className = "group-section";
+    const section = document.createElement("section");
+    section.className = "group-section";
 
-      section.innerHTML = `
-        <article class="panel group-card">
-          <div class="group-head">
-            <div class="group-name">${escapeHtml(city)}</div>
-            <div class="group-count">${messages.length} ${messages.length === 1 ? "mensaje" : "mensajes"}</div>
-          </div>
-          <div class="messages">
-            ${messages.map(msg => `
-              <article class="message">
-                <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
+    section.innerHTML = `
+      <article class="panel group-card">
+        <div class="group-head">
+          <div class="group-name">Todos los mensajes</div>
+          <div class="group-count">${filtered.length} ${filtered.length === 1 ? "mensaje" : "mensajes"}</div>
+        </div>
+        <div class="messages">
+          ${filtered.map(msg => createMessageCard(msg)).join("")}
+        </div>
+      </article>
+    `;
 
-                <div class="message-meta">
-                  <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
-                  ${msg.ciudad ? `
-                    <span class="meta-sep">•</span>
-                    <span>${escapeHtml(msg.ciudad)}</span>
-                  ` : ""}
-                </div>
-              </article>
-            `).join("")}
-          </div>
-        </article>
-      `;
-
-      resultsEl.appendChild(section);
-    });
+    resultsEl.appendChild(section);
 
     resultsText.textContent = `${filtered.length} ${filtered.length === 1 ? "mensaje encontrado" : "mensajes encontrados"}`;
-    currentFilter.textContent = "Todos los mensajes";
+    currentFilter.textContent = "Orden original del buzón";
   }
 
   async function init(){
