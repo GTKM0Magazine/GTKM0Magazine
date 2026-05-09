@@ -402,7 +402,7 @@
     <div class="panel hero-copy">
       <h1>Buzón Alboranista</h1>
       <p class="intro" id="introText">
-        Aquí puedes recorrer todos los mensajes del buzón, buscarlos por ciudad o nombre y descubrir qué espera vivir cada fan en el inicio del Global Tour KM0.
+        Aquí puedes recorrer todos los mensajes del buzón en el orden original, buscarlos por ciudad o nombre y descubrir qué espera vivir cada fan en el inicio del Global Tour KM0.
       </p>
     </div>
 
@@ -427,7 +427,7 @@
 
   <div class="results-bar">
     <div id="resultsText">Cargando mensajes…</div>
-    <div id="currentFilter">Todas las ciudades</div>
+    <div id="currentFilter">Todos los mensajes</div>
   </div>
 
   <section id="results"></section>
@@ -445,7 +445,7 @@
     pais: "Chile",
     slug: "chile",
     editionLabel: "Edición Chile · Buzón Alboranista",
-    introText: "Aquí puedes recorrer todos los mensajes del buzón, buscarlos por ciudad o nombre y descubrir qué espera vivir cada fan en el inicio del Global Tour KM0.",
+    introText: "Aquí puedes recorrer todos los mensajes del buzón en el orden original, buscarlos por ciudad o nombre y descubrir qué espera vivir cada fan en el inicio del Global Tour KM0.",
     jsonPath: "/GTKM0Magazine/revistas/chile/mensajes.json",
     editionPath: "/GTKM0Magazine/revistas/chile/"
   };
@@ -554,7 +554,7 @@
     if (!filtered.length){
       emptyState.classList.add("show");
       resultsText.textContent = "0 mensajes encontrados";
-      currentFilter.textContent = "Todas las ciudades";
+      currentFilter.textContent = "Todos los mensajes";
       return;
     }
 
@@ -592,7 +592,7 @@
     });
 
     resultsText.textContent = `${filtered.length} ${filtered.length === 1 ? "mensaje encontrado" : "mensajes encontrados"}`;
-    currentFilter.textContent = "Todas las ciudades";
+    currentFilter.textContent = "Todos los mensajes";
   }
 
   async function init(){
