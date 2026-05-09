@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buzón Alboranista Chile | Global Tour Km0 Magazine</title>
+
+<style>
+  @font-face{
+    font-family: "Miracle";
+    src: url("/GTKM0Magazine/assets/miracle.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face{
+    font-family: "Big Shoulders";
+    src: url("/GTKM0Magazine/assets/big-shoulders-regular.woff") format("woff");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+  @font-face{
+    font-family: "Big Shoulders";
+    src: url("/GTKM0Magazine/assets/big-shoulders-bold.woff") format("woff");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  :root{
+    --bg:#0f0f10;
+    --panel: rgba(18,18,20,.82);
+    --border: rgba(255,255,255,.10);
+    --text: rgba(255,255,255,.92);
+    --muted: rgba(255,255,255,.65);
+    --accent:#e10600;
+    --card: rgba(255,255,255,.04);
+    --shadow: 0 20px 60px rgba(0,0,0,.38);
+
+    --font-display: "Miracle", serif;
+    --font-title: "Big Shoulders", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    --font-body: "Helvetica Now Condensed", "HelveticaNeue-Condensed", "Helvetica Neue",
+                 "Arial Narrow", Arial, "Roboto Condensed", system-ui, sans-serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ min-height:100%; }
+
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, rgba(225,6,0,.10), transparent 60%),
+      radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.05), transparent 60%),
+      var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+  }
+
+  .topbar{
+    position:sticky;
+    top:0;
+    z-index:999;
+    background:var(--panel);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+
+  .topbar-inner{
+    max-width:1180px;
+    margin:0 auto;
+    min-height:64px;
+    padding:10px 16px;
+    display:grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items:center;
+    gap:10px;
+  }
+
+  .left,.right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+  }
+
+  .left{ justify-content:flex-start; }
+  .right{ justify-content:flex-end; }
+
+  .center{
+    text-align:center;
+    line-height:1.05;
+    min-width:0;
+  }
+
+  .brand{
+    font-family:var(--font-display);
+    font-size:16px;
+    letter-spacing:.7px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .edition{
+    margin-top:4px;
+    font-family:var(--font-title);
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-size:12px;
+    color:var(--muted);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    text-decoration:none;
+    font-family:var(--font-title);
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    font-size:13px;
+    cursor:pointer;
+  }
+
+  .btn:hover{ background: rgba(255,255,255,.10); }
+
+  .btn.red{
+    border-color: rgba(225,6,0,.55);
+    background: rgba(225,6,0,.18);
+  }
+
+  .btn.red:hover{ background: rgba(225,6,0,.26); }
+
+  .wrap{
+    max-width:1180px;
+    margin:0 auto;
+    padding:26px 16px 54px;
+  }
+
+  .hero{
+    display:grid;
+    grid-template-columns: 1.1fr .9fr;
+    gap:18px;
+    margin-bottom:18px;
+  }
+
+  .panel{
+    border:1px solid var(--border);
+    border-radius:18px;
+    background:var(--card);
+    box-shadow:var(--shadow);
+  }
+
+  .hero-copy{
+    padding:22px;
+  }
+
+  h1{
+    margin:0;
+    font-family:var(--font-display);
+    font-weight:400;
+    font-size:clamp(34px, 4vw, 52px);
+    line-height:1.02;
+    letter-spacing:.6px;
+  }
+
+  .intro{
+    margin:12px 0 0;
+    color:var(--muted);
+    font-size:15px;
+    line-height:1.5;
+    max-width:64ch;
+  }
+
+  .stats{
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:12px;
+    padding:18px;
+  }
+
+  .kpi{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background:rgba(0,0,0,.16);
+    padding:14px;
+  }
+
+  .kpi .n{
+    font-family:var(--font-title);
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  .kpi .l{
+    margin-top:4px;
+    font-size:12px;
+    color:var(--muted);
+  }
+
+  .toolbar{
+    display:grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+    gap:14px;
+    margin-bottom:18px;
+    align-items:start;
+  }
+
+  .search-wrap,
+  .filters-wrap{
+    padding:14px;
+  }
+
+  .label{
+    font-family:var(--font-title);
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-size:12px;
+    color:var(--muted);
+    margin-bottom:10px;
+  }
+
+  .search{
+    width:100%;
+    padding:12px 14px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    background: rgba(255,255,255,.06);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-size:14px;
+    outline:none;
+  }
+
+  .search::placeholder{ color: rgba(255,255,255,.40); }
+
+  .filters-wrap{
+    max-height:415px;
+    overflow:auto;
+  }
+
+  .filters-wrap::-webkit-scrollbar{
+    width:8px;
+  }
+
+  .filters-wrap::-webkit-scrollbar-thumb{
+    background: rgba(255,255,255,.12);
+    border-radius:999px;
+  }
+
+  .chips{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .chip{
+    border:1px solid var(--border);
+    background:rgba(255,255,255,.05);
+    color:var(--text);
+    border-radius:999px;
+    padding:7px 9px;
+    font-size:11px;
+    cursor:pointer;
+    font-family:var(--font-title);
+    font-weight:700;
+    letter-spacing:.7px;
+    text-transform:uppercase;
+    line-height:1;
+  }
+
+  .chip.active{
+    border-color: rgba(225,6,0,.55);
+    background: rgba(225,6,0,.18);
+  }
+
+  .results-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin:8px 0 14px;
+    color:var(--muted);
+    font-size:13px;
+  }
+
+  .group-section{
+    margin:0 0 16px;
+  }
+
+  .group-card{
+    overflow:hidden;
+  }
+
+  .group-head{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    border-bottom:1px solid var(--border);
+    background: rgba(255,255,255,.03);
+  }
+
+  .group-name{
+    font-family:var(--font-title);
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:1px;
+    text-transform:uppercase;
+  }
+
+  .group-count{
+    font-size:12px;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+
+  .messages{
+    display:grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap:12px;
+    padding:16px;
+  }
+
+  .message{
+    border:1px solid var(--border);
+    border-radius:14px;
+    background: rgba(0,0,0,.12);
+    padding:14px;
+  }
+
+  .message-text{
+    margin:0;
+    font-size:15px;
+    line-height:1.5;
+  }
+
+  .message-meta{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:13px;
+    line-height:1.5;
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+    align-items:center;
+  }
+
+  .meta-sep{
+    opacity:.45;
+  }
+
+  .meta-social{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+  }
+
+  .meta-concerts{
+    opacity:.92;
+  }
+
+  .social-icon{
+    width:13px;
+    height:13px;
+    display:block;
+    opacity:.78;
+    filter: brightness(0) invert(1);
+    flex:0 0 auto;
+  }
+
+  .empty{
+    display:none;
+    border:1px dashed var(--border);
+    border-radius:18px;
+    padding:26px;
+    color:var(--muted);
+    text-align:center;
+    background:rgba(255,255,255,.03);
+  }
+
+  .empty.show{ display:block; }
+
+  .toast{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:18px;
+    background:rgba(0,0,0,.68);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:12px;
+    opacity:0;
+    pointer-events:none;
+    transition: opacity .2s ease;
+    z-index:9999;
+  }
+
+  .toast.show{ opacity:1; }
+
+  footer{
+    max-width:1180px;
+    margin:0 auto;
+    padding:0 16px 28px;
+    text-align:center;
+    color:rgba(255,255,255,.45);
+    font-size:12px;
+  }
+
+  @media (max-width: 980px){
+    .hero{ grid-template-columns: 1fr; }
+    .toolbar{ grid-template-columns: 1fr; }
+    .messages{ grid-template-columns: 1fr; }
+    .topbar-inner{
+      min-height:56px;
+      grid-template-columns: auto 1fr auto;
+    }
+    .btn .txt{ display:none; }
+  }
+
+  @media (max-width: 560px){
+    .stats{ grid-template-columns: 1fr; }
+    .group-head{
+      align-items:flex-start;
+      flex-direction:column;
+    }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="left">
+      <a class="btn" id="backToEdition" href="/GTKM0Magazine/revistas/chile/">
+        <span>←</span><span class="txt">Volver a la edición</span>
+      </a>
+    </div>
+
+    <div class="center">
+      <div class="brand">Global Tour KmO Magazine</div>
+      <div class="edition" id="editionLabel">Edición Chile · Buzón Alboranista</div>
+    </div>
+
+    <div class="right">
+      <button class="btn red" id="btnShare" type="button">
+        <span>⤴</span><span class="txt">Compartir</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div class="panel hero-copy">
+      <h1>Buzón Alboranista</h1>
+      <p class="intro" id="introText">
+        Aquí puedes recorrer todos los mensajes del buzón por concierto, buscarlos por ciudad o nombre y ver qué espera vivir cada fan en su fecha del Global Tour KM0.
+      </p>
+    </div>
+
+    <div class="panel stats">
+      <div class="kpi">
+        <div class="n" id="kpiMessages">0</div>
+        <div class="l">Mensajes</div>
+      </div>
+      <div class="kpi">
+        <div class="n" id="kpiConcerts">0</div>
+        <div class="l">Conciertos</div>
+      </div>
+      <div class="kpi">
+        <div class="n" id="kpiCities">0</div>
+        <div class="l">Ciudades</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <div class="panel search-wrap">
+      <div class="label">Buscar</div>
+      <input id="searchInput" class="search" type="text" placeholder="Busca por nombre, ciudad, concierto o una palabra del mensaje…">
+    </div>
+
+    <div class="panel filters-wrap">
+      <div class="label">Conciertos</div>
+      <div class="chips" id="chips"></div>
+    </div>
+  </section>
+
+  <div class="results-bar">
+    <div id="resultsText">Cargando mensajes…</div>
+    <div id="currentFilter">Todos los conciertos</div>
+  </div>
+
+  <section id="results"></section>
+  <div class="empty" id="emptyState">No hay resultados con esa búsqueda.</div>
+</main>
+
+<footer>
+  Global Tour Km0 Magazine · Archivo completo del Buzón Alboranista en España
+</footer>
+
+<div class="toast" id="toast">Enlace copiado ✨</div>
+
+<script>
+  const CFG = {
+    pais: "Chile",
+    slug: "chile",
+    editionLabel: "Edición Chile · Buzón Alboranista",
+    introText: "Aquí puedes recorrer todos los mensajes del buzón por concierto, buscarlos por ciudad o nombre y ver qué espera vivir cada fan en su fecha del Global Tour KM0.",
+    jsonPath: "/GTKM0Magazine/revistas/chile/mensajes.json",
+    editionPath: "/GTKM0Magazine/revistas/chile/"
+  };
+
+  const editionLabel = document.getElementById("editionLabel");
+  const introText = document.getElementById("introText");
+  const backToEdition = document.getElementById("backToEdition");
+
+  editionLabel.textContent = CFG.editionLabel;
+  introText.textContent = CFG.introText;
+  backToEdition.href = CFG.editionPath;
+
+  const resultsEl = document.getElementById("results");
+  const chipsEl = document.getElementById("chips");
+  const searchInput = document.getElementById("searchInput");
+  const emptyState = document.getElementById("emptyState");
+  const resultsText = document.getElementById("resultsText");
+  const currentFilter = document.getElementById("currentFilter");
+
+  const kpiMessages = document.getElementById("kpiMessages");
+  const kpiConcerts = document.getElementById("kpiConcerts");
+  const kpiCities = document.getElementById("kpiCities");
+
+  let allMessages = [];
+  let selectedConcert = "Todos";
+
+  function normalize(text){
+    return (text || "")
+      .toString()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .trim();
+  }
+
+  function escapeHtml(text){
+    const map = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    };
+    return String(text).replace(/[&<>"']/g, m => map[m]);
+  }
+
+  function showToast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 1400);
+  }
+
+  function getSocialIconPath(red){
+    const icons = {
+      instagram: "/GTKM0Magazine/assets/icons/instagram.svg",
+      tiktok: "/GTKM0Magazine/assets/icons/tiktok.svg",
+      twitter: "/GTKM0Magazine/assets/icons/x.svg",
+      x: "/GTKM0Magazine/assets/icons/x.svg",
+      youtube: "/GTKM0Magazine/assets/icons/youtube.svg",
+      facebook: "/GTKM0Magazine/assets/icons/facebook.svg"
+    };
+    return icons[red] || "/GTKM0Magazine/assets/icons/link.svg";
+  }
+
+  function getConcerts(msg){
+    if (Array.isArray(msg.conciertos)) return msg.conciertos.filter(Boolean);
+    if (typeof msg.concierto === "string" && msg.concierto.trim()) return [msg.concierto.trim()];
+    return [];
+  }
+
+  function parseConcertDate(concert){
+    const match = String(concert).match(/^(\d{2})\/(\d{2})/);
+    if (!match) return null;
+    const day = Number(match[1]);
+    const month = Number(match[2]);
+    return { day, month, sortValue: month * 100 + day };
+  }
+
+  function getUniqueCities(messages){
+    const cities = new Set();
+    messages.forEach(msg => {
+      if (msg.ciudad && msg.ciudad.trim()) cities.add(msg.ciudad.trim());
+    });
+    return cities;
+  }
+
+  function sortConcerts(a, b){
+    const da = parseConcertDate(a);
+    const db = parseConcertDate(b);
+
+    if (da && db && da.sortValue !== db.sortValue){
+      return da.sortValue - db.sortValue;
+    }
+    if (da && !db) return -1;
+    if (!da && db) return 1;
+
+    return a.localeCompare(b, "es");
+  }
+
+  function buildChips(messages){
+    const concertSet = new Set();
+    messages.forEach(m => getConcerts(m).forEach(c => concertSet.add(c)));
+    const concerts = [...concertSet].sort(sortConcerts);
+
+    chipsEl.innerHTML = "";
+
+    const allBtn = document.createElement("button");
+    allBtn.className = "chip active";
+    allBtn.textContent = "Todos";
+    allBtn.dataset.concert = "Todos";
+    chipsEl.appendChild(allBtn);
+
+    concerts.forEach(concert => {
+      const btn = document.createElement("button");
+      btn.className = "chip";
+      btn.textContent = concert;
+      btn.dataset.concert = concert;
+      chipsEl.appendChild(btn);
+    });
+
+    kpiConcerts.textContent = concerts.length;
+  }
+
+  chipsEl.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if (!btn) return;
+
+    selectedConcert = btn.dataset.concert;
+    [...chipsEl.querySelectorAll(".chip")].forEach(ch => {
+      ch.classList.toggle("active", ch === btn);
+    });
+
+    render();
+  });
+
+  document.getElementById("btnShare").addEventListener("click", async () => {
+    const url = window.location.href;
+    try{
+      if (navigator.share){
+        await navigator.share({ title: document.title, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        showToast("Enlace copiado ✨");
+      }
+    } catch(e){
+      try{
+        await navigator.clipboard.writeText(url);
+        showToast("Enlace copiado ✨");
+      } catch(_){
+        showToast("No se pudo copiar 😅");
+      }
+    }
+  });
+
+  function groupByConcert(messages){
+    const groups = new Map();
+
+    messages.forEach(msg => {
+      const concerts = getConcerts(msg);
+
+      if (concerts.length){
+        concerts.forEach(concert => {
+          if (selectedConcert !== "Todos" && concert !== selectedConcert) return;
+          if (!groups.has(concert)) groups.set(concert, []);
+          groups.get(concert).push(msg);
+        });
+      } else if (selectedConcert === "Todos"){
+        const fallback = "Sin concierto asignado";
+        if (!groups.has(fallback)) groups.set(fallback, []);
+        groups.get(fallback).push(msg);
+      }
+    });
+
+    return [...groups.entries()].sort((a, b) => sortConcerts(a[0], b[0]));
+  }
+
+  function render(){
+    const q = normalize(searchInput.value);
+
+    const filtered = allMessages.filter(msg => {
+      const concerts = getConcerts(msg);
+      const matchesConcert = selectedConcert === "Todos" || concerts.includes(selectedConcert);
+      const haystack = normalize([
+        msg.ciudad,
+        msg.nombre,
+        msg.mensaje,
+        msg.usuario,
+        msg.red,
+        concerts.join(" ")
+      ].join(" "));
+
+      const matchesSearch = !q || haystack.includes(q);
+      return matchesConcert && matchesSearch;
+    });
+
+    const grouped = groupByConcert(filtered);
+    resultsEl.innerHTML = "";
+
+    if (!filtered.length){
+      emptyState.classList.add("show");
+      resultsText.textContent = "0 mensajes encontrados";
+      currentFilter.textContent = selectedConcert === "Todos" ? "Todos los conciertos" : selectedConcert;
+      return;
+    }
+
+    emptyState.classList.remove("show");
+
+    grouped.forEach(([concert, messages]) => {
+      const section = document.createElement("section");
+      section.className = "group-section";
+
+      section.innerHTML = `
+        <article class="panel group-card">
+          <div class="group-head">
+            <div class="group-name">${escapeHtml(concert)}</div>
+            <div class="group-count">${messages.length} ${messages.length === 1 ? "mensaje" : "mensajes"}</div>
+          </div>
+          <div class="messages">
+            ${messages.map(msg => `
+              <article class="message">
+                <p class="message-text">${escapeHtml(msg.mensaje || "")}</p>
+
+                <div class="message-meta">
+                  <span>${escapeHtml(msg.nombre || "Anónimo")}</span>
+
+                  ${msg.ciudad ? `
+                    <span class="meta-sep">•</span>
+                    <span>${escapeHtml(msg.ciudad)}</span>
+                  ` : ""}
+
+                  ${msg.red && msg.usuario ? `
+                    <span class="meta-sep">•</span>
+                    <span class="meta-social">
+                      <img
+                        src="${getSocialIconPath(msg.red)}"
+                        alt="${escapeHtml(msg.red || "red social")}"
+                        class="social-icon"
+                      >
+                      <span>${escapeHtml(msg.usuario)}</span>
+                    </span>
+                  ` : ""}
+
+                  ${getConcerts(msg).length ? `
+                    <span class="meta-sep">•</span>
+                    <span class="meta-concerts">${getConcerts(msg).map(c => escapeHtml(c)).join(" · ")}</span>
+                  ` : ""}
+                </div>
+              </article>
+            `).join("")}
+          </div>
+        </article>
+      `;
+
+      resultsEl.appendChild(section);
+    });
+
+    resultsText.textContent = `${filtered.length} ${filtered.length === 1 ? "mensaje encontrado" : "mensajes encontrados"}`;
+    currentFilter.textContent = selectedConcert === "Todos" ? "Todos los conciertos" : selectedConcert;
+  }
+
+  async function init(){
+    try{
+      const res = await fetch(CFG.jsonPath);
+      if (!res.ok) throw new Error("No se pudo cargar el JSON");
+
+      allMessages = await res.json();
+
+      kpiMessages.textContent = allMessages.length;
+      kpiCities.textContent = getUniqueCities(allMessages).size;
+
+      buildChips(allMessages);
+      render();
+
+    } catch(err){
+      resultsEl.innerHTML = `
+        <div class="panel" style="padding:20px;">
+          No se pudieron cargar los mensajes. Revisa la ruta de <code>mensajes.json</code>.
+        </div>
+      `;
+      resultsText.textContent = "Error de carga";
+      console.error(err);
+    }
+  }
+
+  searchInput.addEventListener("input", render);
+  init();
+</script>
+
+</body>
+</html>
